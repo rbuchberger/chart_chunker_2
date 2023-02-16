@@ -10,6 +10,7 @@ export default class Cycle {
   context: ChunkerConfig
   parser: Parser
   _halves?: CycleHalf[]
+  _processedLines: number[][] = []
 
   constructor(
     rawHalves: RawLine[][],
@@ -82,9 +83,13 @@ export default class Cycle {
   }
 
   get unparsed() {
-    return Papa.unparse(new Concatenator(this.halves).concatenatedWithHeaders, {
+    return Papa.unparse(this.processedLines, {
       delimiter: "\t",
     })
+  }
+
+  get processedLines() {
+    return new Concatenator(this.halves).concatenatedWithHeaders
   }
 
   get length() {
