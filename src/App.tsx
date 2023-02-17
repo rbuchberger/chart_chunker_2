@@ -9,7 +9,7 @@ function App() {
 
   return (
     <main className="bg-gray-800 font-sans text-lg text-gray-50">
-      <div className="mx-auto flex h-screen max-w-6xl flex-col items-center gap-5 px-4 pt-10">
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center gap-5 px-4 py-10">
         <Header />
 
         <Card>
