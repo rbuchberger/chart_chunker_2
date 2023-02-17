@@ -7,4 +7,8 @@ export const router = createBrowserRouter([
     path: "/",
     element: <FileUploader />,
   },
+  {
+    path: "/options",
+    element: <Options />,
+  },
 ])
