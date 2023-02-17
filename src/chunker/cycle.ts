@@ -9,8 +9,15 @@ export default class Cycle {
   cycleNumber: number
   context: ChunkerConfig
   parser: Parser
-  _halves?: CycleHalf[]
-  _processedLines: number[][] = []
+  halves: CycleHalf[]
+  charge?: CycleHalf
+  discharge?: CycleHalf
+  headers: string[]
+  unparsed: string
+  chargeEfficiency: number | null
+  length: number
+  processedLines: unknown[][]
+  overview: { headers: string[]; lines: (string | number | undefined)[][] }
 
   constructor(
     rawHalves: RawLine[][],
@@ -18,13 +25,28 @@ export default class Cycle {
     config: ChunkerConfig,
     parser: Parser
   ) {
+    // Setup
     this.rawHalves = rawHalves
     this.cycleNumber = cycleNumber
     this.context = config
     this.parser = parser
+
+    // Analyze
+    // note that since this result is passed from a serviceworker,
+    // only serializable data can be passed back to the main thread. Getter
+    // functions won't work. Order matters; some results depend on others
+    this.halves = this._halves()
+    this.charge = this.halves.find((half) => half.isCharge)
+    this.discharge = this.halves.find((half) => half.isDischarge)
+    this.headers = this.halves.flatMap((half) => half.headers)
+    this.processedLines = new Concatenator(this.halves).concatenatedWithHeaders
+    this.unparsed = Papa.unparse(this.processedLines, { delimiter: "\t" })
+    this.chargeEfficiency = this._chargeEfficiency()
+    this.length = this.halves.reduce((a, h) => a + h.lines.length, 0)
+    this.overview = this._overview()
   }
 
-  get overview() {
+  private _overview() {
     return {
       headers: ["", "Charge", "Discharge"],
       lines: [
@@ -60,43 +82,13 @@ export default class Cycle {
     }
   }
 
-  get halves() {
-    if (!this._halves) {
-      this._halves = this.rawHalves.map((half) => {
-        return new CycleHalf(half, this.cycleNumber, this.context, this.parser)
-      })
-    }
-
-    return this._halves
-  }
-
-  get charge() {
-    return this.halves.find((half) => half.isCharge)
-  }
-
-  get discharge() {
-    return this.halves.find((half) => half.isDischarge)
-  }
-
-  get headers() {
-    return this.halves.flatMap((half) => half.headers)
-  }
-
-  get unparsed() {
-    return Papa.unparse(this.processedLines, {
-      delimiter: "\t",
+  private _halves() {
+    return this.rawHalves.map((half) => {
+      return new CycleHalf(half, this.cycleNumber, this.context, this.parser)
     })
   }
 
-  get processedLines() {
-    return new Concatenator(this.halves).concatenatedWithHeaders
-  }
-
-  get length() {
-    return this.halves.reduce((acc, half) => acc + half.lines.length, 0)
-  }
-
-  get chargeEfficiency() {
+  private _chargeEfficiency() {
     if (!this.charge || !this.discharge) return null
 
     const ratio =

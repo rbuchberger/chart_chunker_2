@@ -10,6 +10,9 @@ import Parser, { RawLine } from "./parser"
 // half-cycle. If it's ~zero, end any cycle that's in progress and discard that
 // line.
 
+// The result is passed from a service worker, which means that we can't send
+// functions or classes. We can only send JSON-serializable objects. All results
+// must be calculated during construction.
 export type ChunkerConfig = {
   splitBasis: number
   keptColumns: number[]
@@ -20,17 +23,33 @@ export type ChunkerConfig = {
 export class Chunker {
   cycles: Cycle[] = []
   config: ChunkerConfig
-  halfCycle: RawLine[] | null = null
+  private halfCycle: RawLine[] | null = null
   parser: Parser
+  chargeEffArray: (number | null)[]
+  retentionArray: (number | null)[]
+  overview: { headers: string[]; lines: (number | null | undefined)[][] }
+  unparsed: string
+  keptColumns: number[]
+  unparsedOverview: string
 
   constructor(config: ChunkerConfig, parser: Parser) {
+    // Setup
     this.config = config
     this.parser = parser
 
-    this.buildCycles()
+    // Chunk
+    this._buildCycles()
+
+    // Presentation
+    this.chargeEffArray = this.cycles.map((cycle) => cycle.chargeEfficiency)
+    this.retentionArray = this.cycles.map((cycle) => this._getRetention(cycle))
+    this.overview = this._overview()
+    this.keptColumns = this._keptColumns()
+    this.unparsed = this._unparsed()
+    this.unparsedOverview = this._unparsedOverview()
   }
 
-  get overview() {
+  private _overview() {
     return {
       headers: [
         "Cycle #",
@@ -45,31 +64,23 @@ export class Chunker {
           cycle.charge?.specificCapacity,
           cycle.discharge?.specificCapacity,
           cycle.chargeEfficiency,
-          this.getRetention(cycle),
+          this._getRetention(cycle),
         ]
       }),
     }
   }
 
-  get chargeEffArray() {
-    return this.cycles.map((cycle) => cycle.chargeEfficiency)
-  }
-
-  get retentionArray() {
-    return this.cycles.map((cycle) => this.getRetention(cycle))
-  }
-
-  get keptColumns() {
+  private _keptColumns() {
     return this.config.keptColumns.slice().sort() // order matters
   }
 
-  get unparsed() {
-    return Papa.unparse(this.concatenated, {
+  private _unparsed() {
+    return Papa.unparse(this._concatenated(), {
       delimiter: "\t",
     })
   }
 
-  get unparsedOverview() {
+  private _unparsedOverview() {
     return Papa.unparse(
       [this.overview.headers].concat(
         this.overview.lines.map((l) => l.map((v) => v?.toString() || ""))
@@ -78,15 +89,11 @@ export class Chunker {
     )
   }
 
-  get concatenated() {
+  private _concatenated() {
     return new Concatenator(this.cycles).concatenated
   }
 
-  get cycleCount() {
-    return this.cycles.length
-  }
-
-  getRetention(cycle: Cycle) {
+  private _getRetention(cycle: Cycle) {
     if (!cycle.discharge || !this.cycles[0].discharge) return null
 
     const ratio =
@@ -96,7 +103,7 @@ export class Chunker {
     return Math.round(ratio * 10000) / 100
   }
 
-  buildCycles() {
+  private _buildCycles() {
     let lastValuePos = false // Whether the last value was positive
     let currentValue: number
     let currentCycle: RawLine[] = []
@@ -116,7 +123,7 @@ export class Chunker {
       if (Math.abs(currentValue) < 0.0000005) {
         if (currentCycle.length > 0) {
           // There was a cycle in progress; finish it and prep a new one.
-          this.addHalfCycle(currentCycle)
+          this._addHalfCycle(currentCycle)
           currentCycle = []
         }
 
@@ -131,7 +138,7 @@ export class Chunker {
 
         // the sign has changed, and the cycle is complete.
       } else {
-        this.addHalfCycle(currentCycle)
+        this._addHalfCycle(currentCycle)
 
         // Set up the next cycle
         lastValuePos = currentValue > 0
@@ -141,16 +148,16 @@ export class Chunker {
 
     // catch the last one:
     if (currentCycle.length > 0) {
-      this.addHalfCycle(currentCycle)
+      this._addHalfCycle(currentCycle)
     }
   }
 
-  addHalfCycle(lines: RawLine[]) {
+  private _addHalfCycle(lines: RawLine[]) {
     if (this.halfCycle) {
       this.cycles.push(
         new Cycle(
           [this.halfCycle, lines],
-          this.cycleCount + 1,
+          this.cycles.length + 1,
           this.config,
           this.parser
         )

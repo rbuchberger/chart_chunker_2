@@ -6,9 +6,16 @@ export default class CycleHalf {
   cycleNumber: number
   config: ChunkerConfig
   parser: Parser
-  private _averageSplitBasis?: number
-  private _processedLines?: number[][]
-  private _headers?: string[]
+  isCharge: boolean
+  isDischarge: boolean
+  averageSplitBasis: number
+  maxVoltage: number
+  minVoltage: number
+  maxSpecificCapacity: number
+  minSpecificCapacity: number
+  specificCapacity: number
+  processedLines: number[][]
+  headers: string[]
 
   constructor(
     lines: RawLine[],
@@ -16,76 +23,43 @@ export default class CycleHalf {
     config: ChunkerConfig,
     parser: Parser
   ) {
+    // Setup
     this.lines = lines
     this.cycleNumber = cycleNumber
     this.config = config
     this.parser = parser
+
+    // Analyze. Same caveats as in Cycle
+    this.averageSplitBasis = this._buildAverageSplitBasis()
+    this.isCharge = this.averageSplitBasis > 0
+    this.isDischarge = this.averageSplitBasis < 0
+    this.processedLines = this._buildProcessedLines()
+    this.maxVoltage = this._findLargest(this.config.voltageColumn).value
+    this.minVoltage = this._findSmallest(this.config.voltageColumn).value
+    this.maxSpecificCapacity = this._findLargest(this.config.spcColumn).value
+    this.minSpecificCapacity = this._findSmallest(this.config.spcColumn).value
+    this.specificCapacity = this.maxSpecificCapacity - this.minSpecificCapacity
+    this.headers = this._buildHeaders()
   }
 
-  get isCharge() {
-    return this.averageSplitBasis > 0
-  }
+  private _buildAverageSplitBasis() {
+    const total = this.lines.reduce(
+      (acc, line) => acc + parseFloat(line[this.config.splitBasis]),
+      0
+    )
 
-  get isDischarge() {
-    return this.averageSplitBasis < 0
-  }
-
-  get maxVoltage() {
-    return this._findLargest(this.config.voltageColumn).value
-  }
-
-  get minVoltage() {
-    return this._findSmallest(this.config.voltageColumn).value
-  }
-
-  get maxSpecificCapacity() {
-    return this._findLargest(this.config.spcColumn).value
-  }
-
-  get minSpecificCapacity() {
-    return this._findSmallest(this.config.spcColumn).value
-  }
-
-  get specificCapacity() {
-    return this.maxSpecificCapacity - this.minSpecificCapacity
-  }
-
-  get averageSplitBasis() {
-    if (!this._averageSplitBasis) {
-      const total = this.lines.reduce(
-        (total, line) => total + parseFloat(line[this.config.splitBasis]),
-        0
-      )
-
-      this._averageSplitBasis = total / this.lines.length
-    }
-
-    return this._averageSplitBasis
+    return total / this.lines.length
   }
 
   // Filters and converts to floats
-  get processedLines() {
-    if (!this._processedLines) {
-      this._processedLines = this.lines.map((line) => {
-        return this.filterColumns(line).map((val) => Math.abs(parseFloat(val)))
-      })
-    }
-
-    return this._processedLines
-  }
-
-  get headers() {
-    return (this._headers = this._headers || this._buildHeaders())
-  }
-
-  filterColumns(line: RawLine) {
-    return line.filter((_element, index) =>
-      this.config.keptColumns.includes(index)
-    )
+  private _buildProcessedLines() {
+    return this.lines.map((line) => {
+      return this._filterColumns(line).map((val) => Math.abs(parseFloat(val)))
+    })
   }
 
   private _buildHeaders() {
-    const baseTitles = this.filterColumns(this.parser.columns)
+    const baseTitles = this._filterColumns(this.parser.columns)
     const chargePrefix = this.isCharge ? "C" : "D"
 
     return baseTitles.map((item, index) => {
@@ -100,6 +74,10 @@ export default class CycleHalf {
         return chargePrefix + this.cycleNumber + "_" + item
       }
     })
+  }
+
+  private _filterColumns(line: RawLine) {
+    return this.config.keptColumns.map((i) => line[i])
   }
 
   private _findLargest(column: number) {
