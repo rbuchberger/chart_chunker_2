@@ -5,7 +5,7 @@ import { ColumnSelectBox } from "../primitives/ColumnSelectBox"
 import { ChunkerPreview } from "./ChunkerPreview"
 
 export const OptionsHandler: FunctionComponent = () => {
-  const { config, setConfig, parser, file } = useStore()
+  const { config, setConfig, parser, file, chunkWorker } = useStore()
   const navigate = useNavigate()
 
   const handleChange = useCallback(
@@ -41,8 +41,12 @@ export const OptionsHandler: FunctionComponent = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    navigate("/presenter")
 
-    navigate("/")
+    // The chart on the next screen has a nice animation, but receiving
+    // the full message gives it a noticeable stutter. The timeout lets it
+    // finish, hiding the stutter.
+    setTimeout(() => chunkWorker.postMessage({ returnFull: true }), 600)
   }
 
   // Loading state check on options page should prevent this, but let's keep
@@ -51,28 +55,28 @@ export const OptionsHandler: FunctionComponent = () => {
 
   return (
     <form className="flex flex-col items-center gap-10" onSubmit={handleSubmit}>
-      <div className="grid w-full grid-cols-6 gap-10">
+      <div className="flex w-full flex-row justify-between gap-10">
         <Link
           to="/"
-          className="col-span-1 cursor-pointer rounded-md border border-gray-50 bg-gray-600 py-3 text-center text-xl hover:bg-gray-500"
+          className="w-32 shrink-0 cursor-pointer rounded-md border border-gray-50 bg-gray-600 py-3 text-center text-xl hover:bg-gray-500"
         >
           Back
         </Link>
         <Link
           to="/"
-          className="col-span-2 col-start-3 rounded-md border border-gray-50 px-3 py-2 text-center font-mono text-3xl font-light"
+          className="min-w-[8rem] overflow-hidden overflow-ellipsis rounded-md border border-gray-50 px-6 py-2 text-center font-mono text-3xl font-light"
         >
           {file.name}
         </Link>
 
         <input
           type="submit"
-          value="Go"
-          className="col-span-1 col-start-6 cursor-pointer rounded-md border border-gray-50 bg-yellow-600  text-center text-xl hover:bg-yellow-500"
+          value="Next"
+          className="w-32 shrink-0 cursor-pointer rounded-md border border-gray-50 bg-yellow-600 text-center text-xl hover:bg-yellow-500"
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-10">
+      <div className="grid gap-10 sm:grid-cols-3">
         <ColumnSelectBox
           name="splitBasis"
           label="Detect cycles based on"
@@ -98,27 +102,26 @@ export const OptionsHandler: FunctionComponent = () => {
         />
       </div>
 
-      <div className="grid w-full grid-cols-3 gap-2">
-        <div />
-        <ChunkerPreview />
-        <div />
-      </div>
+      <ChunkerPreview />
 
       <section className="flex flex-col gap-6 rounded-md bg-gray-600 p-7">
         <h2 className="text-2xl">Which columns would you like to keep?</h2>
 
-        <ul className="grid grid-cols-4 gap-x-4 gap-y-2">
+        <ul className="grid gap-x-6 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {parser.columns.map((col, index) => (
-            <li key={index}>
-              <input
-                type="checkbox"
-                name={col}
-                data-index={index}
-                onChange={handleColumnToggle}
-                checked={config.keptColumns.includes(index)}
-              />
-              <label htmlFor={col} className="px-3 font-mono text-sm">
-                {col}
+            <li key={index} className="grow rounded-md bg-gray-600">
+              <label className="flex h-full cursor-pointer items-center whitespace-nowrap px-2 py-1 font-mono text-sm leading-5">
+                <input
+                  type="checkbox"
+                  className="rounded-full text-yellow-500 focus:ring-yellow-500"
+                  name={col}
+                  data-index={index}
+                  onChange={handleColumnToggle}
+                  checked={config.keptColumns.includes(index)}
+                />
+                <div className="select-none overflow-hidden overflow-ellipsis px-2 pt-1">
+                  {col}
+                </div>
               </label>
             </li>
           ))}
