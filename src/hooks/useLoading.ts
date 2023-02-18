@@ -3,7 +3,7 @@ import { useStore } from "./useStore"
 export type LoadingState = "none" | "reading" | "parsing" | "chunking" | "done"
 
 export const useLoading = () => {
-  const { file, text, parser, chunker } = useStore()
+  const { file, text, parser, chunker, chunkerOverview } = useStore()
 
   if (!file) {
     return "none"
@@ -11,7 +11,7 @@ export const useLoading = () => {
     return "reading"
   } else if (!parser) {
     return "parsing"
-  } else if (!chunker) {
+  } else if (!chunkerOverview) {
     return "chunking"
   } else {
     return "done"

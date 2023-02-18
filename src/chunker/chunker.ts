@@ -20,6 +20,12 @@ export type ChunkerConfig = {
   voltageColumn: number
 }
 
+export type ChunkerOverview = {
+  headers: string[]
+  lines: (number | null | undefined)[][]
+  cycleCount: number
+}
+
 export class Chunker {
   cycles: Cycle[] = []
   config: ChunkerConfig
@@ -27,7 +33,7 @@ export class Chunker {
   parser: Parser
   chargeEffArray: (number | null)[]
   retentionArray: (number | null)[]
-  overview: { headers: string[]; lines: (number | null | undefined)[][] }
+  overview: ChunkerOverview
   unparsed: string
   keptColumns: number[]
   unparsedOverview: string
@@ -67,6 +73,7 @@ export class Chunker {
           this._getRetention(cycle),
         ]
       }),
+      cycleCount: this.cycles.length,
     }
   }
 

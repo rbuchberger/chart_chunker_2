@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { ChunkWorkerResponse } from "../workers/chunker"
 import { useStore } from "./useStore"
 
 // There's a pipeline from file upload to chunker output, many steps of which
@@ -19,36 +20,46 @@ export const useChunker = () => {
     parseWorker,
     readWorker,
     chunkWorker,
+    setChunkerOverview,
   } = useStore()
 
   readWorker.onmessage = (e) => setText(e.data)
+
   parseWorker.onmessage = (e) => setParser(e.data)
-  chunkWorker.onmessage = (e) => setChunker(e.data)
+
+  chunkWorker.onmessage = (e: MessageEvent<ChunkWorkerResponse>) => {
+    if (e.data.chunker) setChunker(e.data.chunker)
+
+    setChunkerOverview(e.data.overview)
+  }
 
   // Parse file into text when uploaded
   useEffect(() => {
     setText(null)
 
-    // The setTimout prevents the FileReader from blocking the UI for long
-    // enough to update it to reflect user actions. Wish there
-    // was a better way, but worker.postMessage is slow for big messages. Same
-    // applies to parseWorker and chunkWorker.
-    if (file) setTimeout(() => readWorker.postMessage(file), 50)
+    if (file) readWorker.postMessage(file)
   }, [file])
 
   // Hand text to parser when text finishes
   useEffect(() => {
     setParser(null)
 
-    if (text) setTimeout(() => parseWorker.postMessage(text), 50)
+    if (text) parseWorker.postMessage(text)
   }, [text])
 
-  // Run Chunker when parsed text & config are present
+  // Pass config to chunker
+  useEffect(() => {
+    // We don't null the overview because it causes UI flickering. Stale data is
+    // fine for a few hundred ms.
+    setChunker(null)
+
+    chunkWorker.postMessage({ config })
+  }, [config])
+
+  // Pass parser to chunker
   useEffect(() => {
     setChunker(null)
 
-    if (parser) {
-      setTimeout(() => chunkWorker.postMessage({ config, parser }), 50)
-    }
-  }, [config, parser])
+    if (parser) chunkWorker.postMessage({ parser })
+  }, [parser])
 }

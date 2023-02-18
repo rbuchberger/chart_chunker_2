@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { Chunker, ChunkerConfig } from "../chunker/chunker"
+import { Chunker, ChunkerConfig, ChunkerOverview } from "../chunker/chunker"
 import Parser from "../chunker/parser"
 import ParseWorker from "../workers/parser?worker"
 import ReadWorker from "../workers/filereader?worker"
@@ -20,6 +20,9 @@ export const useStore = create<{
 
   chunker: Chunker | null
   setChunker: (chunker: Chunker | null) => void
+
+  chunkerOverview: ChunkerOverview | null
+  setChunkerOverview: (chunkerOverview: ChunkerOverview | null) => void
 
   parseWorker: Worker
   chunkWorker: Worker
@@ -44,6 +47,9 @@ export const useStore = create<{
 
   chunker: null,
   setChunker: (chunker) => set({ chunker }),
+
+  chunkerOverview: null,
+  setChunkerOverview: (chunkerOverview) => set({ chunkerOverview }),
 
   parseWorker: new ParseWorker(),
   readWorker: new ReadWorker(),
