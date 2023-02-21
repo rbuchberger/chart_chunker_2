@@ -4,9 +4,31 @@ import { useStore } from "../hooks/useStore"
 import { ColumnSelectBox } from "../primitives/ColumnSelectBox"
 import { ChunkerPreview } from "../components/ChunkerPreview"
 import { NavBar } from "../components/NavBar"
+import { useLoading } from "../hooks/useLoading"
 
 export const Options: FunctionComponent = () => {
-  const { config, setConfig, parser, file } = useStore()
+  const { config, setConfig, parser } = useStore()
+
+  const loading = useLoading()
+
+  const navBar = (
+    <NavBar
+      left={
+        <Link to="/" className="btn btn--nav btn--gray">
+          Back
+        </Link>
+      }
+      right={
+        parser ? (
+          <Link to="/presenter" className="btn btn--nav btn--yellow">
+            Next
+          </Link>
+        ) : (
+          <div className="btn btn--nav btn--disabled">Next</div>
+        )
+      }
+    />
+  )
 
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -39,24 +61,19 @@ export const Options: FunctionComponent = () => {
     [config]
   )
 
-  // Loading state check on options page should prevent this, but let's keep
-  // TS happy
-  if (!file || !parser) return null
+  if (!parser)
+    return (
+      <>
+        {navBar}
+        <h2 className="py-12 text-center text-2xl">
+          {loading === "none" ? "Please Select a file." : "Working..."}
+        </h2>
+      </>
+    )
 
   return (
     <form className="flex flex-col items-center gap-10">
-      <NavBar
-        left={
-          <Link to="/" className="btn btn--nav btn--gray">
-            Back
-          </Link>
-        }
-        right={
-          <Link to="/presenter" className="btn btn--nav btn--yellow">
-            Next
-          </Link>
-        }
-      />
+      {navBar}
 
       <div className="grid gap-10 sm:grid-cols-3">
         <ColumnSelectBox

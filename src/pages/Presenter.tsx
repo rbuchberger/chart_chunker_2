@@ -13,12 +13,30 @@ import { Clipboard } from "@styled-icons/heroicons-solid"
 import { DataTable } from "../primitives/DataTable"
 import Concatenator from "../chunker/concatenator"
 import Papa from "papaparse"
+import { useLoading } from "../hooks/useLoading"
 
 export const Presenter: FunctionComponent = () => {
   const { chunker } = useStore()
   const [selectedCycle, setSelectedCycle] = useState(0)
 
-  if (!chunker?.overview) return <p>loading...</p>
+  const loading = useLoading()
+
+  if (!chunker?.overview)
+    return (
+      <>
+        <NavBar
+          left={
+            <Link className="btn btn--nav btn--gray" to="/">
+              Back
+            </Link>
+          }
+        />
+
+        <h2 className="py-12 text-center text-2xl">
+          {loading === "none" ? "Please Select a file." : "Working..."}
+        </h2>
+      </>
+    )
 
   const copyAll = () => {
     if (!chunker) return
