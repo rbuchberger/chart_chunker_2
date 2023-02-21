@@ -24,7 +24,7 @@ export const NavBar: FunctionComponent<{
   }
 
   return (
-    <div className="flex w-full flex-row justify-between gap-10">
+    <div className="flex w-full flex-row justify-between gap-2 sm:gap-10">
       {left}
 
       <Tippy
@@ -63,7 +63,7 @@ export const NavBar: FunctionComponent<{
               }
             )}
           >
-            <div>{file ? file.name : "No file"}</div>
+            <div>{file ? file.name : ""}</div>
           </div>
         </label>
       </Tippy>

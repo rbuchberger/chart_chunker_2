@@ -20,10 +20,45 @@ export const Root: FunctionComponent = () => {
         }
       />
 
-      <p className="col-span-5 col-start-2 pl-3 text-sm text-gray-50">
-        I will look for a line that says RESULTS TABLE, and read everything
-        below it.
-      </p>
+      <h2 className="mb-16 text-center text-2xl">
+        {file ? "Thanks!" : "Can I see your data?"}
+      </h2>
+
+      <div className="mx-auto flex max-w-prose flex-col gap-6">
+        <p className="max-w-prose">
+          This is the new and improved chart chunker; if you prefer the old
+          version it can be found{" "}
+          <a
+            href="https://chart-chunker.netlify.app/"
+            className="text-yellow-500"
+          >
+            here
+          </a>
+          .
+        </p>
+
+        <p>
+          Version 2 is almost a complete rewrite. It should be faster, easier to
+          use, and generally better-behaved. It will definitely be easier to
+          maintain!
+        </p>
+
+        <p>
+          Feedback is appreciated! Tell me about your troubles:
+          <a
+            className="ml-2 text-yellow-500"
+            href="mailto:robert@buchberger.cc"
+          >
+            robert@buchberger.cc
+          </a>
+        </p>
+        <p className="mt-16 text-center">
+          Created by{" "}
+          <a className="text-yellow-500" href="https://robert-buchberger.com">
+            Robert Buchberger
+          </a>
+        </p>
+      </div>
     </>
   )
 }
