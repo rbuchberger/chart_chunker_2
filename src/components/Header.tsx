@@ -5,13 +5,8 @@ export const Header: FunctionComponent = () => {
   return (
     <Card>
       <header>
-        <h1 className="text-4xl font-light">Chart Chunker - v2!</h1>
-        <span>
-          Made by{" "}
-          <a className="text-yellow-400" href="https://robert-buchberger.com">
-            Robert Buchberger
-          </a>
-        </span>
+        <h1 className="text-4xl font-light">The Chart Chunker</h1>
+        <div className="text-right text-sm font-light">it chunks charts</div>
       </header>
     </Card>
   )
