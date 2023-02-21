@@ -7,7 +7,7 @@ export default class Concatenator {
   // an array of cycles (which contain such tables), and appends them
   // side-by-side.
   cycles: (CycleHalf | Cycle)[]
-  table: unknown[][] = [[]]
+  table: (string | number)[][] = [[]]
 
   constructor(cycles: (CycleHalf | Cycle)[]) {
     this.cycles = cycles
@@ -43,7 +43,7 @@ export default class Concatenator {
     return this.table
   }
 
-  _appendToLine(cycleNo: number, line: unknown[], lineNo: number) {
+  _appendToLine(cycleNo: number, line: (string | number)[], lineNo: number) {
     // This cycle might be the longest one so far, so we may need to add a new
     // empty line:
     if (this.table.length < lineNo + 1) {

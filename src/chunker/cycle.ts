@@ -16,7 +16,7 @@ export default class Cycle {
   unparsed: string
   chargeEfficiency: number | null
   length: number
-  processedLines: unknown[][]
+  processedLines: (string | number)[][]
   overview: { headers: string[]; lines: (string | number | undefined)[][] }
 
   constructor(
