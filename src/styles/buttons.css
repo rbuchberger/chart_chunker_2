@@ -1,0 +1,19 @@
+.btn {
+  @apply flex items-center justify-center rounded-md border border-gray-50 px-2 py-1 whitespace-nowrap overflow-hidden
+}
+
+.btn--nav {
+  @apply w-32 text-xl
+}
+
+.btn--gray {
+  @apply bg-gray-600 hover:bg-gray-500 cursor-pointer
+}
+
+.btn--yellow {
+  @apply cursor-pointer bg-yellow-600 hover:bg-yellow-500
+}
+
+.btn--disabled {
+  @apply bg-gray-700 cursor-not-allowed
+}
