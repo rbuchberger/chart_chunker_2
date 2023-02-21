@@ -1,6 +1,8 @@
+import Tippy from "@tippyjs/react"
 import classNames from "classnames"
 import { FunctionComponent } from "react"
 import { useStore } from "../hooks/useStore"
+import "tippy.js/dist/tippy.css" // optional
 
 export const NavBar: FunctionComponent<{
   right?: React.ReactNode
@@ -25,37 +27,46 @@ export const NavBar: FunctionComponent<{
     <div className="flex w-full flex-row justify-between gap-10">
       {left}
 
-      <label htmlFor="file" className="flex flex-grow cursor-pointer flex-row">
-        <input
-          type="file"
-          id="file"
-          className="hidden"
-          onChange={handleChange}
-        />
-        <div
-          className={classNames(
-            "whitespace-nowrap rounded-l-md px-3 py-2 transition-colors",
-            {
-              "bg-yellow-600  hover:bg-yellow-500": !enableNext,
-              "bg-gray-500 text-gray-50 hover:bg-gray-600": enableNext,
-            }
-          )}
+      <Tippy
+        content="It will look for a line that says RESULTS TABLE, and read everything below it as CSV."
+        disabled={!!file}
+        placement="bottom"
+      >
+        <label
+          htmlFor="file"
+          className="flex flex-grow cursor-pointer flex-row"
         >
-          Choose File
-        </div>
+          <input
+            type="file"
+            id="file"
+            className="hidden"
+            onChange={handleChange}
+          />
+          <div
+            className={classNames(
+              "whitespace-nowrap rounded-l-md px-3 py-2 transition-colors",
+              {
+                "bg-yellow-600  hover:bg-yellow-500": !enableNext,
+                "bg-gray-500 text-gray-50 hover:bg-gray-600": enableNext,
+              }
+            )}
+          >
+            Choose File
+          </div>
 
-        <div
-          className={classNames(
-            "col-span-4 flex flex-grow flex-row items-center rounded-r-md border border-l-0 px-3 font-mono",
-            {
-              "border-gray-500": enableNext,
-              "border-yellow-600": !enableNext,
-            }
-          )}
-        >
-          <div>{file ? file.name : "No file"}</div>
-        </div>
-      </label>
+          <div
+            className={classNames(
+              "col-span-4 flex flex-grow flex-row items-center rounded-r-md border border-l-0 px-3 font-mono",
+              {
+                "border-gray-500": enableNext,
+                "border-yellow-600": !enableNext,
+              }
+            )}
+          >
+            <div>{file ? file.name : "No file"}</div>
+          </div>
+        </label>
+      </Tippy>
 
       {right}
     </div>

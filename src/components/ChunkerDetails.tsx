@@ -10,7 +10,7 @@ export const ChunkerDetails: FunctionComponent<{
   const { chunker } = useStore()
   const cycles = chunker?.cycles
 
-  if (!cycles) return <p>loading...</p>
+  if (!cycles) return <h2 className="py-12 text-center text-xl">working...</h2>
 
   return (
     <>
@@ -20,22 +20,18 @@ export const ChunkerDetails: FunctionComponent<{
         cycles={cycles}
       />
 
-      <div className="">
-        <h3 className="text-xl">Analysis</h3>
-        <DataTable
-          headers={cycles[selectedCycle].overview.headers}
-          lines={cycles[selectedCycle].overview.lines}
-        />
-      </div>
+      <DataTable
+        title="Analysis"
+        headers={cycles[selectedCycle].overview.headers}
+        lines={cycles[selectedCycle].overview.lines}
+      />
 
-      <div className="">
-        <h3 className="text-xl">Data</h3>
-        <DataTable
-          headers={cycles[selectedCycle].processedLines[0]}
-          lines={cycles[selectedCycle].processedLines.slice(1)}
-          startCollapsed={true}
-        />
-      </div>
+      <DataTable
+        title="Data"
+        headers={cycles[selectedCycle].processedLines[0]}
+        lines={cycles[selectedCycle].processedLines.slice(1)}
+        startCollapsed={true}
+      />
     </>
   )
 }

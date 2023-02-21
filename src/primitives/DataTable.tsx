@@ -3,6 +3,8 @@ import {
   ChevronRight,
   Clipboard,
 } from "@styled-icons/heroicons-solid"
+import Tippy from "@tippyjs/react"
+import "tippy.js/dist/tippy.css" // optional
 import classNames from "classnames"
 import { FunctionComponent, ReactNode, useState } from "react"
 import { useTableCopy } from "../hooks/useTableCopy"
@@ -23,17 +25,19 @@ export const DataTable: FunctionComponent<{
     <div className="flex flex-col gap-2">
       <div className="flex flex-row justify-between">
         <h3 className="text-xl">{title}</h3>
-        <button onClick={handleCopy} className="btn btn--gray">
-          <Clipboard size={18} />
-          Copy this table
-        </button>
+        <Tippy
+          content={`Copy this ${headers.length}x${lines.length} table to the clipboard`}
+        >
+          <button onClick={handleCopy} className="btn btn--gray">
+            <Clipboard size={18} />
+            Copy this table
+          </button>
+        </Tippy>
       </div>
+
       <div className="flex flex-row gap-2 align-top">
         <button
-          onClick={(e) => {
-            e.stopPropagation()
-            setCollapsed(!collapsed)
-          }}
+          onClick={() => setCollapsed(!collapsed)}
           className="flex rounded-md border border-gray-600"
         >
           {collapsed ? <ChevronRight size={24} /> : <ChevronDown size={24} />}

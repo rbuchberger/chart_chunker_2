@@ -5,6 +5,8 @@ import { ColumnSelectBox } from "../primitives/ColumnSelectBox"
 import { ChunkerPreview } from "../components/ChunkerPreview"
 import { NavBar } from "../components/NavBar"
 import { useLoading } from "../hooks/useLoading"
+import Tippy from "@tippyjs/react"
+import "tippy.js/dist/tippy.css" // optional
 
 export const Options: FunctionComponent = () => {
   const { config, setConfig, parser } = useStore()
@@ -82,11 +84,13 @@ export const Options: FunctionComponent = () => {
           columns={parser.columnItems}
           value={config.splitBasis}
           onChange={handleChange}
+          helpText="Cycles will be separated whenever this column switches between positive and negative. Lines where it's zero are discarded."
         />
 
         <ColumnSelectBox
           name="voltageColumn"
           label="Voltage"
+          helpText="Used to show the max & min voltages"
           value={config.voltageColumn}
           columns={parser.columnItems}
           onChange={handleChange}
@@ -95,6 +99,7 @@ export const Options: FunctionComponent = () => {
         <ColumnSelectBox
           name="spcColumn"
           label="Specific Capacity"
+          helpText="Used to calculate charge efficiency & retention"
           value={config.spcColumn}
           columns={parser.columnItems}
           onChange={handleChange}
@@ -104,7 +109,9 @@ export const Options: FunctionComponent = () => {
       <ChunkerPreview />
 
       <section className="flex flex-col gap-6 rounded-md bg-gray-600 p-7">
-        <h2 className="text-2xl">Which columns would you like to keep?</h2>
+        <Tippy content="Selected columns will be included in the final data.">
+          <h2 className="text-2xl">Which columns would you like to keep?</h2>
+        </Tippy>
 
         <ul className="grid gap-x-6 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {parser.columns.map((col, index) => (

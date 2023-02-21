@@ -14,6 +14,8 @@ import { DataTable } from "../primitives/DataTable"
 import Concatenator from "../chunker/concatenator"
 import Papa from "papaparse"
 import { useLoading } from "../hooks/useLoading"
+import Tippy from "@tippyjs/react"
+import "tippy.js/dist/tippy.css" // optional
 
 export const Presenter: FunctionComponent = () => {
   const { chunker } = useStore()
@@ -96,10 +98,15 @@ export const Presenter: FunctionComponent = () => {
           </Link>
         }
         right={
-          <button onClick={copyAll} className="btn btn--nav btn--gray">
-            <Clipboard size={18} />
-            Copy All
-          </button>
+          <Tippy
+            placement="bottom"
+            content="Copy all cycles to the clipboard, side-by-side"
+          >
+            <button onClick={copyAll} className="btn btn--nav btn--gray">
+              <Clipboard size={18} />
+              Copy All
+            </button>
+          </Tippy>
         }
       />
 
