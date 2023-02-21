@@ -20,7 +20,6 @@ export const useChunker = () => {
     parseWorker,
     readWorker,
     chunkWorker,
-    setChunkerOverview,
   } = useStore()
 
   readWorker.onmessage = (e) => setText(e.data)
@@ -28,9 +27,7 @@ export const useChunker = () => {
   parseWorker.onmessage = (e) => setParser(e.data)
 
   chunkWorker.onmessage = (e: MessageEvent<ChunkWorkerResponse>) => {
-    if (e.data.chunker) setChunker(e.data.chunker)
-
-    setChunkerOverview(e.data.overview)
+    setChunker(e.data.chunker)
   }
 
   // Parse file into text when uploaded
@@ -42,24 +39,16 @@ export const useChunker = () => {
 
   // Hand text to parser when text finishes
   useEffect(() => {
-    setParser(null)
-
     if (text) parseWorker.postMessage(text)
   }, [text])
 
   // Pass config to chunker
   useEffect(() => {
-    // We don't null the overview because it causes UI flickering. Stale data is
-    // fine for a few hundred ms.
-    setChunker(null)
-
     chunkWorker.postMessage({ config })
   }, [config])
 
   // Pass parser to chunker
   useEffect(() => {
-    setChunker(null)
-
     if (parser) chunkWorker.postMessage({ parser })
   }, [parser])
 }

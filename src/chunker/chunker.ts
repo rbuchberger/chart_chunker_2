@@ -1,6 +1,4 @@
-import Papa from "papaparse"
-import Concatenator from "./concatenator"
-import Cycle from "./cycle"
+import Cycle, { CyclePartial } from "./cycle"
 import Parser, { RawLine } from "./parser"
 
 // Take in an array of arrays (papa-parsed CSV table). Split it up into cycles.
@@ -26,6 +24,13 @@ export type ChunkerOverview = {
   cycleCount: number
 }
 
+export type ChunkerPartial = Omit<
+  Chunker,
+  "cycles" | "config" | "parser" | "condensed"
+> & {
+  cycles: CyclePartial[]
+}
+
 export class Chunker {
   cycles: Cycle[] = []
   config: ChunkerConfig
@@ -34,9 +39,7 @@ export class Chunker {
   chargeEffArray: (number | null)[]
   retentionArray: (number | null)[]
   overview: ChunkerOverview
-  unparsed: string
   keptColumns: number[]
-  unparsedOverview: string
 
   constructor(config: ChunkerConfig, parser: Parser) {
     // Setup
@@ -51,8 +54,15 @@ export class Chunker {
     this.retentionArray = this.cycles.map((cycle) => this._getRetention(cycle))
     this.overview = this._overview()
     this.keptColumns = this._keptColumns()
-    this.unparsed = this._unparsed()
-    this.unparsedOverview = this._unparsedOverview()
+  }
+
+  get condensed(): ChunkerPartial {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { cycles, config, parser, ...chunker } = this
+
+    const condensedCycles = cycles.map((cycle) => cycle.condensed)
+
+    return { cycles: condensedCycles, ...chunker }
   }
 
   private _overview() {
@@ -79,25 +89,6 @@ export class Chunker {
 
   private _keptColumns() {
     return this.config.keptColumns.slice().sort() // order matters
-  }
-
-  private _unparsed() {
-    return Papa.unparse(this._concatenated(), {
-      delimiter: "\t",
-    })
-  }
-
-  private _unparsedOverview() {
-    return Papa.unparse(
-      [this.overview.headers].concat(
-        this.overview.lines.map((l) => l.map((v) => v?.toString() || ""))
-      ),
-      { delimiter: "\t" }
-    )
-  }
-
-  private _concatenated() {
-    return new Concatenator(this.cycles).concatenated
   }
 
   private _getRetention(cycle: Cycle) {

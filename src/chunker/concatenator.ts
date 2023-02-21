@@ -1,4 +1,4 @@
-import Cycle from "./cycle"
+import Cycle, { CyclePartial } from "./cycle"
 import CycleHalf from "./cycleHalf"
 
 export default class Concatenator {
@@ -6,10 +6,10 @@ export default class Concatenator {
   // of column entries (just like PapaParse handles them). This class takes in
   // an array of cycles (which contain such tables), and appends them
   // side-by-side.
-  cycles: (CycleHalf | Cycle)[]
+  cycles: (CycleHalf | Cycle | CyclePartial)[]
   table: (string | number)[][] = [[]]
 
-  constructor(cycles: (CycleHalf | Cycle)[]) {
+  constructor(cycles: (CycleHalf | Cycle | CyclePartial)[]) {
     this.cycles = cycles
   }
 

@@ -1,8 +1,18 @@
-import Papa from "papaparse"
 import { ChunkerConfig } from "./chunker"
 import Concatenator from "./concatenator"
 import CycleHalf from "./cycleHalf"
 import Parser, { RawLine } from "./parser"
+
+export type CyclePartial = Omit<
+  Cycle,
+  | "parser"
+  | "context"
+  | "rawHalves"
+  | "halves"
+  | "charge"
+  | "discharge"
+  | "condensed"
+>
 
 export default class Cycle {
   rawHalves: RawLine[][]
@@ -13,7 +23,6 @@ export default class Cycle {
   charge?: CycleHalf
   discharge?: CycleHalf
   headers: string[]
-  unparsed: string
   chargeEfficiency: number | null
   length: number
   processedLines: (string | number)[][]
@@ -40,10 +49,17 @@ export default class Cycle {
     this.discharge = this.halves.find((half) => half.isDischarge)
     this.headers = this.halves.flatMap((half) => half.headers)
     this.processedLines = new Concatenator(this.halves).concatenatedWithHeaders
-    this.unparsed = Papa.unparse(this.processedLines, { delimiter: "\t" })
     this.chargeEfficiency = this._chargeEfficiency()
     this.length = this.halves.reduce((a, h) => a + h.lines.length, 0)
     this.overview = this._overview()
+  }
+
+  get condensed(): CyclePartial {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rawHalves, parser, context, halves, charge, discharge, ...cycle } =
+      this
+
+    return cycle
   }
 
   private _overview() {

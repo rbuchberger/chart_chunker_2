@@ -6,7 +6,7 @@ import { ChunkerPreview } from "../components/ChunkerPreview"
 import { NavBar } from "../components/NavBar"
 
 export const Options: FunctionComponent = () => {
-  const { config, setConfig, parser, file, chunkWorker } = useStore()
+  const { config, setConfig, parser, file } = useStore()
 
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -39,10 +39,6 @@ export const Options: FunctionComponent = () => {
     [config]
   )
 
-  const getFull = () => {
-    setTimeout(() => chunkWorker.postMessage({ returnFull: true }), 600)
-  }
-
   // Loading state check on options page should prevent this, but let's keep
   // TS happy
   if (!file || !parser) return null
@@ -56,11 +52,7 @@ export const Options: FunctionComponent = () => {
           </Link>
         }
         right={
-          <Link
-            to="/presenter"
-            onClick={getFull}
-            className="btn btn--nav btn--yellow"
-          >
+          <Link to="/presenter" className="btn btn--nav btn--yellow">
             Next
           </Link>
         }

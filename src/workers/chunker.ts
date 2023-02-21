@@ -1,4 +1,4 @@
-import { Chunker, ChunkerConfig, ChunkerOverview } from "../chunker/chunker"
+import { Chunker, ChunkerConfig, ChunkerPartial } from "../chunker/chunker"
 import Parser from "../chunker/parser"
 
 const data: {
@@ -14,12 +14,10 @@ const data: {
 export type ChunkWorkerRequest = {
   config?: ChunkerConfig
   parser?: Parser
-  returnFull?: boolean
 }
 
 export type ChunkWorkerResponse = {
-  chunker: Chunker | null
-  overview: ChunkerOverview
+  chunker: ChunkerPartial | null
 }
 
 self.onmessage = function (event: MessageEvent<ChunkWorkerRequest>) {
@@ -37,8 +35,8 @@ self.onmessage = function (event: MessageEvent<ChunkWorkerRequest>) {
 
   data.chunker = new Chunker(data.config, data.parser)
 
+  // Send basic chunker data
   self.postMessage({
-    chunker: event.data.returnFull ? data.chunker : null,
-    overview: data.chunker.overview,
+    chunker: data.chunker.condensed,
   } as ChunkWorkerResponse)
 }

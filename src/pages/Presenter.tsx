@@ -11,15 +11,25 @@ import { ChunkerDetails } from "../components/ChunkerDetails"
 import { NavBar } from "../components/NavBar"
 import { Clipboard } from "@styled-icons/heroicons-solid"
 import { DataTable } from "../primitives/DataTable"
+import Concatenator from "../chunker/concatenator"
+import Papa from "papaparse"
 
 export const Presenter: FunctionComponent = () => {
-  const { chunkerOverview, chunker } = useStore()
+  const { chunker } = useStore()
   const [selectedCycle, setSelectedCycle] = useState(0)
 
-  if (!chunkerOverview) return <p>loading...</p>
+  if (!chunker?.overview) return <p>loading...</p>
 
-  const copyText = (text?: string) => {
-    if (text) navigator.clipboard.writeText(text)
+  const copyAll = () => {
+    if (!chunker) return
+
+    const concatenated = new Concatenator(chunker.cycles || []).concatenated
+
+    const text = Papa.unparse(concatenated, {
+      delimiter: "\t",
+    })
+
+    navigator.clipboard.writeText(text)
   }
 
   const buttons = [
@@ -46,8 +56,8 @@ export const Presenter: FunctionComponent = () => {
   const panes = {
     overview: (
       <DataTable
-        headers={chunkerOverview.headers}
-        lines={chunkerOverview.lines}
+        headers={chunker.overview.headers}
+        lines={chunker.overview.lines}
         title="Analysis"
       />
     ),
@@ -68,10 +78,7 @@ export const Presenter: FunctionComponent = () => {
           </Link>
         }
         right={
-          <button
-            onClick={() => copyText(chunker?.unparsed)}
-            className="btn btn--nav btn--gray"
-          >
+          <button onClick={copyAll} className="btn btn--nav btn--gray">
             <Clipboard size={18} />
             Copy All
           </button>
@@ -79,10 +86,10 @@ export const Presenter: FunctionComponent = () => {
       />
 
       <div className="mx-auto max-w-4xl">
-        <OverviewChart chunkerOverview={chunkerOverview} width={400} />
+        <OverviewChart chunkerOverview={chunker.overview} width={400} />
 
         <h2 className="text-center text-2xl">
-          {chunkerOverview.cycleCount} cycles
+          {chunker.overview.cycleCount} cycles
         </h2>
       </div>
 

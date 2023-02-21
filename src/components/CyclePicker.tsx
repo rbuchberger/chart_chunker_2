@@ -7,15 +7,15 @@ import {
   MinusSmall,
   PlusSmall,
 } from "@styled-icons/heroicons-solid"
-import { Chunker } from "../chunker/chunker"
+import { CyclePartial } from "../chunker/cycle"
 
 export const CyclePicker: FunctionComponent<{
-  chunker: Chunker
+  cycles: CyclePartial[]
   selectedCycle: number
   setSelectedCycle: (cycle: number) => void
-}> = ({ selectedCycle, setSelectedCycle, chunker }) => {
+}> = ({ selectedCycle, setSelectedCycle, cycles }) => {
   const min = 0
-  const max = chunker.cycles.length - 1
+  const max = cycles.length - 1
 
   // Limit between min and max
   const setCappedSelectedCycle = useCallback(
