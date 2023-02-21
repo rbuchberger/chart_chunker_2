@@ -1,7 +1,13 @@
 import Parser from "../chunker/parser"
 
 self.onmessage = function (event: MessageEvent<string>) {
-  const parser = new Parser(event.data)
+  try {
+    const parser = new Parser(event.data)
 
-  self.postMessage(parser)
+    self.postMessage({ result: "success", parser })
+  } catch (e) {
+    console.error(e)
+
+    self.postMessage({ result: "error", error: e })
+  }
 }

@@ -29,6 +29,8 @@ export const useStore = create<{
   flashMessages: FlashMessage[]
   flash: (message: Omit<FlashMessage, "id">) => void
   clearFlash: (id: string) => void
+
+  reset: () => void
 }>((set, get) => ({
   file: null,
   setFile: (file) => set({ file }),
@@ -70,5 +72,14 @@ export const useStore = create<{
     set((state) => ({
       flashMessages: state.flashMessages.filter((m) => m.id !== id),
     }))
+  },
+
+  reset: () => {
+    set({
+      file: null,
+      text: null,
+      parser: null,
+      chunker: null,
+    })
   },
 }))

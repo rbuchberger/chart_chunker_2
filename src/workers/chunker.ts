@@ -18,6 +18,8 @@ export type ChunkWorkerRequest = {
 
 export type ChunkWorkerResponse = {
   chunker: ChunkerPartial | null
+  result: "success" | "error"
+  error?: unknown
 }
 
 self.onmessage = function (event: MessageEvent<ChunkWorkerRequest>) {
@@ -33,10 +35,20 @@ self.onmessage = function (event: MessageEvent<ChunkWorkerRequest>) {
     return
   }
 
-  data.chunker = new Chunker(data.config, data.parser)
+  try {
+    data.chunker = new Chunker(data.config, data.parser)
 
-  // Send basic chunker data
-  self.postMessage({
-    chunker: data.chunker.condensed,
-  } as ChunkWorkerResponse)
+    self.postMessage({
+      chunker: data.chunker.condensed,
+      result: "success",
+    } as ChunkWorkerResponse)
+  } catch (e) {
+    console.error(e)
+
+    self.postMessage({
+      chunker: null,
+      result: "error",
+      error: e,
+    } as ChunkWorkerResponse)
+  }
 }

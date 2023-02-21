@@ -20,20 +20,55 @@ export const useChunker = () => {
     parseWorker,
     readWorker,
     chunkWorker,
+    flash,
+    reset,
   } = useStore()
 
-  readWorker.onmessage = (e) => setText(e.data)
+  readWorker.onmessage = (e) => {
+    if (e.data.result === "error") {
+      flash({
+        content: "Unable to read file. Are you sure it's the right one?",
+        kind: "error",
+      })
 
-  parseWorker.onmessage = (e) => setParser(e.data)
+      console.error(e.data.error)
+      reset()
+
+      return
+    }
+
+    setText(e.data.text)
+  }
+  parseWorker.onmessage = (e) => {
+    if (e.data.result === "error") {
+      flash({
+        content:
+          "Unable to find parsable table in file. Are you sure it's the right one?",
+        kind: "error",
+      })
+
+      reset()
+    }
+
+    return setParser(e.data.parser)
+  }
 
   chunkWorker.onmessage = (e: MessageEvent<ChunkWorkerResponse>) => {
+    if (e.data.result === "error") {
+      reset()
+
+      flash({
+        content:
+          "Read and parsed file, but something went wrong chunking it. Sorry :(",
+        kind: "error",
+      })
+    }
+
     setChunker(e.data.chunker)
   }
 
   // Parse file into text when uploaded
   useEffect(() => {
-    setText(null)
-
     if (file) readWorker.postMessage(file)
   }, [file])
 

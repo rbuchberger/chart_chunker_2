@@ -42,7 +42,17 @@ export default class Parser {
     const splitText = this.rawText.split("RESULTS TABLE:")
     this.header = splitText.shift()
     this.parsedChart = this.buildParsedChart(splitText.shift())
-    this.columns = (this.parsedChart.data.shift() as string[]) || []
+
+    if (
+      this.parsedChart.errors.length > 0 ||
+      this.parsedChart.data.length === 0
+    ) {
+      if (this.parsedChart.errors.length) console.error(this.parsedChart.errors)
+
+      throw new Error("Unable to parse table from file.")
+    }
+
+    this.columns = this.parsedChart.data.shift() as string[]
     this.columnItems =
       this?.columns?.map((label, index) => ({
         text: label,
