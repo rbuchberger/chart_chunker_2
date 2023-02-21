@@ -4,6 +4,7 @@ import Parser from "../chunker/parser"
 import ParseWorker from "../workers/parser?worker"
 import ReadWorker from "../workers/filereader?worker"
 import ChunkWorker from "../workers/chunker?worker"
+import { FlashMessage } from "../components/FlashMessage"
 
 export const useStore = create<{
   file: File | null
@@ -24,7 +25,11 @@ export const useStore = create<{
   parseWorker: Worker
   chunkWorker: Worker
   readWorker: Worker
-}>((set) => ({
+
+  flashMessages: FlashMessage[]
+  flash: (message: Omit<FlashMessage, "id">) => void
+  clearFlash: (id: string) => void
+}>((set, get) => ({
   file: null,
   setFile: (file) => set({ file }),
 
@@ -48,4 +53,22 @@ export const useStore = create<{
   parseWorker: new ParseWorker(),
   readWorker: new ReadWorker(),
   chunkWorker: new ChunkWorker(),
+
+  flashMessages: [],
+  flash: (message) => {
+    const id = Math.random().toString()
+    set((state) => ({
+      flashMessages: [...state.flashMessages, { id, ...message }],
+    }))
+
+    setTimeout(() => {
+      get().clearFlash(id)
+    }, 5000)
+  },
+
+  clearFlash: (id) => {
+    set((state) => ({
+      flashMessages: state.flashMessages.filter((m) => m.id !== id),
+    }))
+  },
 }))

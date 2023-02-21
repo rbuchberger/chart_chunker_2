@@ -8,6 +8,7 @@ import "tippy.js/dist/tippy.css" // optional
 import classNames from "classnames"
 import { FunctionComponent, ReactNode, useState } from "react"
 import { useTableCopy } from "../hooks/useTableCopy"
+import { useStore } from "../hooks/useStore"
 
 export const DataTable: FunctionComponent<{
   headers: ReactNode[]
@@ -15,11 +16,18 @@ export const DataTable: FunctionComponent<{
   startCollapsed?: boolean
   title?: string
 }> = ({ headers, lines, startCollapsed = false, title }) => {
+  const { flash } = useStore()
   const [collapsed, setCollapsed] = useState(startCollapsed)
   const copy = useTableCopy
 
   const handleCopy = () => {
     copy([headers].concat(lines))
+      .then(() => {
+        flash({ kind: "success", content: `Copied ${title || "table"}` })
+      })
+      .catch(() => {
+        flash({ kind: "error", content: "Unable to copy table. Sorry :(" })
+      })
   }
   return (
     <div className="flex flex-col gap-2">

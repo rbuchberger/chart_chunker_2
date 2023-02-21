@@ -18,7 +18,7 @@ import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css" // optional
 
 export const Presenter: FunctionComponent = () => {
-  const { chunker } = useStore()
+  const { chunker, flash } = useStore()
   const [selectedCycle, setSelectedCycle] = useState(0)
 
   const loading = useLoading()
@@ -41,7 +41,14 @@ export const Presenter: FunctionComponent = () => {
     )
 
   const copyAll = () => {
-    if (!chunker) return
+    if (!chunker) {
+      flash({
+        kind: "error",
+        content: "No data to copy. This shouldn't happen, sorry about that.",
+      })
+
+      return
+    }
 
     const concatenated = new Concatenator(chunker.cycles || []).concatenated
 
@@ -49,7 +56,14 @@ export const Presenter: FunctionComponent = () => {
       delimiter: "\t",
     })
 
-    navigator.clipboard.writeText(text)
+    navigator.clipboard
+      .writeText(text)
+      .then(() =>
+        flash({ kind: "success", content: "Copied all data to clipboard" })
+      )
+      .catch(() =>
+        flash({ kind: "error", content: "Unable to copy data. Sorry :(" })
+      )
   }
 
   const buttons = [

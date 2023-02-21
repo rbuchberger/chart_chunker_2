@@ -1,8 +1,8 @@
 import Tippy from "@tippyjs/react"
+import "tippy.js/dist/tippy.css"
 import classNames from "classnames"
 import { FunctionComponent } from "react"
 import { useStore } from "../hooks/useStore"
-import "tippy.js/dist/tippy.css" // optional
 
 export const NavBar: FunctionComponent<{
   right?: React.ReactNode
@@ -72,10 +72,3 @@ export const NavBar: FunctionComponent<{
     </div>
   )
 }
-
-// <Link
-//   to="/"
-//   className="min-w-[8rem] overflow-hidden overflow-ellipsis rounded-md border border-gray-50 px-6 py-2 text-center font-mono text-3xl font-light"
-// >
-//   {file.name}
-// </Link>
