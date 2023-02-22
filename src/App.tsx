@@ -3,8 +3,21 @@ import { router } from "./router"
 import { RouterProvider } from "react-router-dom"
 import { Card } from "./primitives/Card"
 import { useChunker } from "./hooks/useChunker"
-import { XMark } from "@styled-icons/heroicons-solid"
 import { FlashMessages } from "./components/FlashMessages"
+import * as Sentry from "@sentry/react"
+import { BrowserTracing } from "@sentry/tracing"
+
+if (import.meta.env.PROD) {
+  Sentry.init({
+    dsn: "https://32d706941cf04fee8bba0d3c38b07839@o4504719318450176.ingest.sentry.io/4504719320285184",
+    integrations: [new BrowserTracing()],
+
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+  })
+}
 
 function App() {
   useChunker()
