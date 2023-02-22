@@ -20,41 +20,46 @@ export const Root: FunctionComponent = () => {
         }
       />
 
-      <h2 className="mb-16 text-center text-2xl">
+      <h2 className="mb-16 mt-6 text-center text-2xl">
         {file ? "Thanks!" : "Can I see your data?"}
       </h2>
 
       <div className="mx-auto flex max-w-prose flex-col gap-6">
         <p className="max-w-prose">
-          This is the new and improved chart chunker; if you prefer the old
-          version it can be found{" "}
+          This is the new and improved chart chunker; it is almost a complete
+          rewrite. It should be faster, easier to use, and generally
+          better-behaved. It will definitely be easier to maintain!
+        </p>
+
+        <p>
+          This project is open source and can be found on{" "}
+          <a
+            href="https://github.com/rbuchberger/chart_chunker_2"
+            className="text-yellow-400"
+          >
+            Github
+          </a>
+          . You are encouraged to submit issues, discussions, and pull requests
+          as you like. If you prefer, you can contact me directly:{" "}
+          <a className="text-yellow-400" href="mailto:robert@buchberger.cc">
+            robert@buchberger.cc
+          </a>
+        </p>
+
+        <p>
+          The old version can be found{" "}
           <a
             href="https://chart-chunker.netlify.app/"
-            className="text-yellow-500"
+            className="text-yellow-400"
           >
             here
           </a>
           .
         </p>
 
-        <p>
-          Version 2 is almost a complete rewrite. It should be faster, easier to
-          use, and generally better-behaved. It will definitely be easier to
-          maintain!
-        </p>
-
-        <p>
-          Feedback is appreciated! Tell me about your troubles:
-          <a
-            className="ml-2 text-yellow-500"
-            href="mailto:robert@buchberger.cc"
-          >
-            robert@buchberger.cc
-          </a>
-        </p>
         <p className="mt-16 text-center">
-          Created by{" "}
-          <a className="text-yellow-500" href="https://robert-buchberger.com">
+          Created and maintained by{" "}
+          <a className="text-yellow-400" href="https://robert-buchberger.com">
             Robert Buchberger
           </a>
         </p>
