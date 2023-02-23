@@ -1,6 +1,6 @@
 import { ChunkerConfig } from "./chunker"
 import Concatenator from "./concatenator"
-import CycleHalf from "./cycleHalf"
+import CycleHalf, { PartialCycleHalf } from "./cycleHalf"
 import Parser, { RawLine } from "./parser"
 
 export type CyclePartial = Omit<
@@ -9,9 +9,9 @@ export type CyclePartial = Omit<
   | "context"
   | "rawHalves"
   | "halves"
-  | "charge"
-  | "discharge"
   | "condensed"
+  | "chargeComplete"
+  | "dischargeComplete"
 >
 
 export default class Cycle {
@@ -20,8 +20,10 @@ export default class Cycle {
   context: ChunkerConfig
   parser: Parser
   halves: CycleHalf[]
-  charge?: CycleHalf
-  discharge?: CycleHalf
+  chargeComplete?: CycleHalf
+  dischargeComplete?: CycleHalf
+  charge?: PartialCycleHalf
+  discharge?: PartialCycleHalf
   headers: string[]
   chargeEfficiency: number | null
   length: number
@@ -45,8 +47,10 @@ export default class Cycle {
     // only serializable data can be passed back to the main thread. Getter
     // functions won't work. Order matters; some results depend on others
     this.halves = this._halves()
-    this.charge = this.halves.find((half) => half.isCharge)
-    this.discharge = this.halves.find((half) => half.isDischarge)
+    this.chargeComplete = this.halves.find((half) => half.isCharge)
+    this.dischargeComplete = this.halves.find((half) => half.isDischarge)
+    this.discharge = this.dischargeComplete?.condensed
+    this.charge = this.chargeComplete?.condensed
     this.headers = this.halves.flatMap((half) => half.headers)
     this.processedLines = new Concatenator(this.halves).concatenatedWithHeaders
     this.chargeEfficiency = this._chargeEfficiency()
@@ -54,10 +58,18 @@ export default class Cycle {
     this.overview = this._overview()
   }
 
-  get condensed(): CyclePartial {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { rawHalves, parser, context, halves, charge, discharge, ...cycle } =
-      this
+  get condensed() {
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    const {
+      rawHalves,
+      parser,
+      context,
+      halves,
+      chargeComplete,
+      dischargeComplete,
+      ...cycle
+    } = this
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     return cycle
   }
@@ -69,30 +81,38 @@ export default class Cycle {
         // split basis average
         [
           "Average Current",
-          this.charge?.averageSplitBasis,
-          this.discharge?.averageSplitBasis,
+          this.chargeComplete?.averageSplitBasis,
+          this.dischargeComplete?.averageSplitBasis,
         ],
         // charge & discharge max voltage
-        ["Max Voltage", this.charge?.maxVoltage, this.discharge?.maxVoltage],
+        [
+          "Max Voltage",
+          this.chargeComplete?.maxVoltage,
+          this.dischargeComplete?.maxVoltage,
+        ],
         // charge & discharge min voltage
-        ["Min Voltage", this.charge?.minVoltage, this.discharge?.minVoltage],
+        [
+          "Min Voltage",
+          this.chargeComplete?.minVoltage,
+          this.dischargeComplete?.minVoltage,
+        ],
         // charge & discharge max spc
         [
           "Max Specific Capacity",
-          this.charge?.maxSpecificCapacity,
-          this.discharge?.maxSpecificCapacity,
+          this.chargeComplete?.maxSpecificCapacity,
+          this.dischargeComplete?.maxSpecificCapacity,
         ],
         // charge & discharge min min spc
         [
           "Min Specific Capacity",
-          this.charge?.minSpecificCapacity,
-          this.discharge?.minSpecificCapacity,
+          this.chargeComplete?.minSpecificCapacity,
+          this.dischargeComplete?.minSpecificCapacity,
         ],
         // overall spc
         [
           "Overall Specific Capacity",
-          this.charge?.specificCapacity,
-          this.discharge?.specificCapacity,
+          this.chargeComplete?.specificCapacity,
+          this.dischargeComplete?.specificCapacity,
         ],
       ],
     }
@@ -105,10 +125,11 @@ export default class Cycle {
   }
 
   private _chargeEfficiency() {
-    if (!this.charge || !this.discharge) return null
+    if (!this.chargeComplete || !this.dischargeComplete) return null
 
     const ratio =
-      this.discharge.maxSpecificCapacity / this.charge.maxSpecificCapacity
+      this.dischargeComplete.maxSpecificCapacity /
+      this.chargeComplete.maxSpecificCapacity
     return Math.round(ratio * 10000) / 100
   }
 }

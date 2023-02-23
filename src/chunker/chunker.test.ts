@@ -40,7 +40,7 @@ test("chunker", () => {
     -0.000060983465545454524,
   ])
 
-  expect(chunker.cycles[1]?.discharge?.headers).toEqual([
+  expect(chunker.cycles[1]?.dischargeComplete?.headers).toEqual([
     "D2_(-6.1e-5)_U/E[V]",
     "D2_Curr[A]",
     "D2_Specific capactity[Ah/g]",

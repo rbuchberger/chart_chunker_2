@@ -1,6 +1,11 @@
 import { ChunkerConfig } from "./chunker"
 import Parser, { RawLine } from "./parser"
 
+export type PartialCycleHalf = Omit<
+  CycleHalf,
+  "lines" | "config" | "parser" | "processedLines" | "condensed"
+>
+
 export default class CycleHalf {
   lines: RawLine[]
   cycleNumber: number
@@ -40,6 +45,14 @@ export default class CycleHalf {
     this.minSpecificCapacity = this._findSmallest(this.config.spcColumn).value
     this.specificCapacity = this.maxSpecificCapacity - this.minSpecificCapacity
     this.headers = this._buildHeaders()
+  }
+
+  get condensed() {
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    const { lines, config, parser, processedLines, ...half } = this
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+
+    return half
   }
 
   private _buildAverageSplitBasis() {

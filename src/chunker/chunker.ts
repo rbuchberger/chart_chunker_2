@@ -77,8 +77,8 @@ export class Chunker {
       lines: this.cycles.map((cycle) => {
         return [
           cycle.cycleNumber,
-          cycle.charge?.specificCapacity,
-          cycle.discharge?.specificCapacity,
+          cycle.chargeComplete?.specificCapacity,
+          cycle.dischargeComplete?.specificCapacity,
           cycle.chargeEfficiency,
           this._getRetention(cycle),
         ]
@@ -92,11 +92,11 @@ export class Chunker {
   }
 
   private _getRetention(cycle: Cycle) {
-    if (!cycle.discharge || !this.cycles[0].discharge) return null
+    if (!cycle.dischargeComplete || !this.cycles[0].dischargeComplete) return null
 
     const ratio =
-      cycle.discharge.maxSpecificCapacity /
-      this.cycles[0].discharge.maxSpecificCapacity
+      cycle.dischargeComplete.maxSpecificCapacity /
+      this.cycles[0].dischargeComplete.maxSpecificCapacity
 
     return Math.round(ratio * 10000) / 100
   }
