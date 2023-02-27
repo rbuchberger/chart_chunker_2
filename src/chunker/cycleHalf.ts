@@ -1,4 +1,5 @@
-import { ChunkerConfig } from "./chunker"
+import { Context } from "./chunk"
+import { ChunkerConfig, HalfCycleLocation } from "./chunker"
 import Parser, { RawLine } from "./parser"
 
 export type PartialCycleHalf = Omit<
@@ -23,16 +24,17 @@ export default class CycleHalf {
   headers: string[]
 
   constructor(
-    lines: RawLine[],
+    location: HalfCycleLocation,
     cycleNumber: number,
-    config: ChunkerConfig,
-    parser: Parser
+    context: Context
   ) {
     // Setup
-    this.lines = lines
+    this.config = context.config
+    this.parser = context.parser
+
+    this.lines = this.parser.lines.slice(location.start, location.endExclusive)
+
     this.cycleNumber = cycleNumber
-    this.config = config
-    this.parser = parser
 
     // Analyze. Same caveats as in Cycle
     this.averageSplitBasis = this._buildAverageSplitBasis()

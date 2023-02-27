@@ -1,10 +1,11 @@
-import { Chunker, ChunkerConfig, ChunkerPartial } from "../chunker/chunker"
+import { chunk } from "../chunker/chunk"
+import { ChunkerConfig, ChunkerPartial } from "../chunker/chunker"
 import Parser from "../chunker/parser"
 
 const data: {
   config: ChunkerConfig | null
   parser: Parser | null
-  chunker: Chunker | null
+  chunker: ChunkerPartial | null
 } = {
   config: null,
   parser: null,
@@ -17,7 +18,7 @@ export type ChunkWorkerRequest = {
 }
 
 export type ChunkWorkerResponse = {
-  chunker: ChunkerPartial | null
+  chunker: ReturnType<typeof chunk> | null
   result: "success" | "error"
   error?: unknown
 }
@@ -27,19 +28,16 @@ self.onmessage = function (event: MessageEvent<ChunkWorkerRequest>) {
   if (event.data.parser) data.parser = event.data.parser
 
   if (!data.config || !data.parser) {
-    self.postMessage({
-      preview: null,
-      chunker: null,
-    })
+    self.postMessage({ preview: null, chunker: null })
 
     return
   }
 
   try {
-    data.chunker = new Chunker(data.config, data.parser)
+    data.chunker = chunk({ config: data.config, parser: data.parser })
 
     self.postMessage({
-      chunker: data.chunker.condensed,
+      chunker: data.chunker,
       result: "success",
     } as ChunkWorkerResponse)
   } catch (e) {

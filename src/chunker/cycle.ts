@@ -1,13 +1,14 @@
-import { ChunkerConfig } from "./chunker"
+import compact from "lodash-es/compact"
+import { Context } from "./chunk"
+import { ChunkerConfig, HalfCycleLocation } from "./chunker"
 import Concatenator from "./concatenator"
 import CycleHalf, { PartialCycleHalf } from "./cycleHalf"
-import Parser, { RawLine } from "./parser"
+import Parser from "./parser"
 
 export type CyclePartial = Omit<
   Cycle,
   | "parser"
-  | "context"
-  | "rawHalves"
+  | "config"
   | "halves"
   | "condensed"
   | "chargeComplete"
@@ -15,60 +16,60 @@ export type CyclePartial = Omit<
 >
 
 export default class Cycle {
-  rawHalves: RawLine[][]
   cycleNumber: number
-  context: ChunkerConfig
+  config: ChunkerConfig
   parser: Parser
-  halves: CycleHalf[]
   chargeComplete?: CycleHalf
   dischargeComplete?: CycleHalf
   charge?: PartialCycleHalf
   discharge?: PartialCycleHalf
   headers: string[]
-  chargeEfficiency: number | null
+  private _halves: (CycleHalf | null)[]
+  chargeEfficiency?: number
   length: number
   processedLines: (string | number)[][]
   overview: { headers: string[]; lines: (string | number | undefined)[][] }
 
   constructor(
-    rawHalves: RawLine[][],
+    a: HalfCycleLocation | null,
+    b: HalfCycleLocation | null,
     cycleNumber: number,
-    config: ChunkerConfig,
-    parser: Parser
+    context: Context
   ) {
     // Setup
-    this.rawHalves = rawHalves
     this.cycleNumber = cycleNumber
-    this.context = config
-    this.parser = parser
+    this.config = context.config
+    this.parser = context.parser
+    this._halves = [
+      a ? new CycleHalf(a, cycleNumber, context) : null,
+      b ? new CycleHalf(b, cycleNumber, context) : null,
+    ]
+
+    this.chargeComplete = this._halves.find(
+      (half) => half?.isCharge
+    ) as CycleHalf
+    this.dischargeComplete = this._halves.find(
+      (half) => half?.isDischarge
+    ) as CycleHalf
 
     // Analyze
     // note that since this result is passed from a serviceworker,
     // only serializable data can be passed back to the main thread. Getter
     // functions won't work. Order matters; some results depend on others
-    this.halves = this._halves()
-    this.chargeComplete = this.halves.find((half) => half.isCharge)
-    this.dischargeComplete = this.halves.find((half) => half.isDischarge)
     this.discharge = this.dischargeComplete?.condensed
     this.charge = this.chargeComplete?.condensed
-    this.headers = this.halves.flatMap((half) => half.headers)
-    this.processedLines = new Concatenator(this.halves).concatenatedWithHeaders
+    this.headers = compact(this._halves.flatMap((half) => half?.headers))
+    this.processedLines = new Concatenator(
+      compact(this._halves)
+    ).concatenatedWithHeaders
     this.chargeEfficiency = this._chargeEfficiency()
-    this.length = this.halves.reduce((a, h) => a + h.lines.length, 0)
+    this.length = this._halves.reduce((a, h) => a + (h?.lines?.length || 0), 0)
     this.overview = this._overview()
   }
 
   get condensed() {
     /* eslint-disable @typescript-eslint/no-unused-vars */
-    const {
-      rawHalves,
-      parser,
-      context,
-      halves,
-      chargeComplete,
-      dischargeComplete,
-      ...cycle
-    } = this
+    const { parser, config, chargeComplete, dischargeComplete, ...cycle } = this
     /* eslint-enable @typescript-eslint/no-unused-vars */
 
     return cycle
@@ -118,14 +119,8 @@ export default class Cycle {
     }
   }
 
-  private _halves() {
-    return this.rawHalves.map((half) => {
-      return new CycleHalf(half, this.cycleNumber, this.context, this.parser)
-    })
-  }
-
   private _chargeEfficiency() {
-    if (!this.chargeComplete || !this.dischargeComplete) return null
+    if (!this.chargeComplete || !this.dischargeComplete) return
 
     const ratio =
       this.dischargeComplete.maxSpecificCapacity /
