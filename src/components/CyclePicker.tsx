@@ -28,7 +28,7 @@ export const CyclePicker: FunctionComponent<{
   return (
     <div className="flex flex-row justify-center gap-2">
       <div className="align-center flex flex-row items-center gap-2 text-2xl">
-        <h2 className="align-bottom">Cycle #</h2>
+        <h2 className="whitespace-nowrap align-bottom">Cycle #</h2>
         <input
           className="w-20 rounded-md border border-gray-50 bg-gray-600 text-center"
           type="number"

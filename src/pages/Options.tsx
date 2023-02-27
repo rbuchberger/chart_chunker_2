@@ -84,13 +84,13 @@ export const Options: FunctionComponent = () => {
           columns={parser.columnItems}
           value={config.splitBasis}
           onChange={handleChange}
-          helpText="Cycles will be separated whenever this column switches between positive and negative. Lines where it's zero are discarded."
+          helpText="Which column should be used to find cycles? They will be separated whenever this column switches between positive and negative. Lines where it's zero are discarded."
         />
 
         <ColumnSelectBox
           name="voltageColumn"
           label="Voltage"
-          helpText="Used to show the max & min voltages"
+          helpText="Which column shows the voltage you are interested in? It's used to show min & max values."
           value={config.voltageColumn}
           columns={parser.columnItems}
           onChange={handleChange}
@@ -99,7 +99,7 @@ export const Options: FunctionComponent = () => {
         <ColumnSelectBox
           name="spcColumn"
           label="Specific Capacity"
-          helpText="Used to calculate charge efficiency & retention"
+          helpText="Which column shows the specific capacity you are interested in? It's used to calculate capacity and retention."
           value={config.spcColumn}
           columns={parser.columnItems}
           onChange={handleChange}
@@ -109,7 +109,7 @@ export const Options: FunctionComponent = () => {
       <ChunkerPreview />
 
       <section className="flex flex-col gap-6 rounded-md bg-gray-600 p-7">
-        <Tippy content="Selected columns will be included in the final data.">
+        <Tippy content="Selected columns will be included when you copy cycle data.">
           <h2 className="text-2xl">Which columns would you like to keep?</h2>
         </Tippy>
 

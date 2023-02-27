@@ -42,8 +42,9 @@ export const useStore = create<{
   setParser: (parser) => set({ parser }),
 
   config: {
+    chargeFirst: true,
     splitBasis: 8,
-    keptColumns: [7, 8, 12, 14],
+    keptColumns: [8, 12, 14],
     spcColumn: 12,
     voltageColumn: 14,
   },
