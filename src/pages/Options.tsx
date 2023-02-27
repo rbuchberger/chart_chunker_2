@@ -7,6 +7,7 @@ import { NavBar } from "../components/NavBar"
 import { useLoading } from "../hooks/useLoading"
 import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css" // optional
+import { ToggleSwitch } from "flowbite-react"
 
 export const Options: FunctionComponent = () => {
   const { config, setConfig, parser } = useStore()
@@ -77,7 +78,25 @@ export const Options: FunctionComponent = () => {
     <form className="flex flex-col items-center gap-10">
       {navBar}
 
-      <div className="grid gap-10 sm:grid-cols-3">
+      <div className="flex flex-wrap justify-center gap-10">
+        <Tippy
+          content="Does the first cycle begin with a charge or a discharge? If set to the opposite value from what is detected, the first will only be a half-cycle."
+          placement="bottom"
+        >
+          <label className="flex cursor-pointer select-none flex-col items-center justify-between font-medium text-gray-300">
+            Charge first?
+            <input
+              className="ml-2 mb-3 h-6 w-6 rounded-full text-yellow-500"
+              type="checkbox"
+              name="chargeFirst"
+              checked={config.chargeFirst}
+              onChange={(e) =>
+                setConfig({ ...config, chargeFirst: e.target.checked })
+              }
+            />
+          </label>
+        </Tippy>
+
         <ColumnSelectBox
           name="splitBasis"
           label="Detect cycles based on"
