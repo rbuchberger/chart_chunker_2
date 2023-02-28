@@ -1,16 +1,15 @@
 import chunk from "lodash-es/chunk"
 import compact from "lodash-es/compact"
+import { buildCycle } from "./buildCycle"
+import { HalfCycleLocation } from "./buildHalf"
 import { Context } from "./chunk"
-import { HalfCycleLocation } from "./chunker"
-import Cycle from "./cycle"
 
 export function buildCycles(locs: HalfCycleLocation[], context: Context) {
   const chargeFirst = context.config.chargeFirst
   const { checkedLocs, errors } = checkLocs(locs, chargeFirst)
 
   const cycles = chunk(checkedLocs, 2).map((pair, index) => {
-    const [a, b] = pair
-    return new Cycle(a ? a : null, b ? b : null, index, context)
+    return buildCycle(pair[0], pair[1], index + 1, context)
   })
 
   return { cycles, errors }

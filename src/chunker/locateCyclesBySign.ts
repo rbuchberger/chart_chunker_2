@@ -1,4 +1,4 @@
-import { HalfCycleLocation } from "./chunker"
+import { HalfCycleLocation } from "./buildHalf"
 import { RawLine } from "./parser"
 
 export const locateCyclesBySign = (lines: RawLine[], splitBasis: number) => {

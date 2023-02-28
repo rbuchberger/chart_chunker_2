@@ -7,10 +7,10 @@ import {
   MinusSmall,
   PlusSmall,
 } from "@styled-icons/heroicons-solid"
-import { CyclePartial } from "../chunker/cycle"
+import { PartialCycle } from "../chunker/buildCycle"
 
 export const CyclePicker: FunctionComponent<{
-  cycles: CyclePartial[]
+  cycles: PartialCycle[]
   selectedCycle: number
   setSelectedCycle: (cycle: number) => void
 }> = ({ selectedCycle, setSelectedCycle, cycles }) => {

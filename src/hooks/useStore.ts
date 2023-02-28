@@ -1,10 +1,10 @@
 import { create } from "zustand"
-import { ChunkerConfig, ChunkerPartial } from "../chunker/chunker"
 import Parser from "../chunker/parser"
 import ParseWorker from "../workers/parser?worker"
 import ReadWorker from "../workers/filereader?worker"
 import ChunkWorker from "../workers/chunker?worker"
 import { FlashMessage } from "../components/FlashMessage"
+import { Chunker, ChunkerConfig } from "../chunker/chunk"
 
 export const useStore = create<{
   file: File | null
@@ -19,8 +19,8 @@ export const useStore = create<{
   config: ChunkerConfig
   setConfig: (parser: ChunkerConfig) => void
 
-  chunker: ChunkerPartial | null
-  setChunker: (chunker: ChunkerPartial | null) => void
+  chunker: Chunker | null
+  setChunker: (chunker: Chunker | null) => void
 
   parseWorker: Worker
   chunkWorker: Worker

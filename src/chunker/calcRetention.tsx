@@ -1,13 +1,16 @@
-import Cycle from "./cycle"
+import { PartialCycle } from "./buildCycle"
 
-export function calcRetention(cycles: Cycle[], cycle?: Cycle) {
-  if (!cycle?.dischargeComplete || !cycles[0].dischargeComplete) {
+export function calcRetention(cycles: PartialCycle[], cycle?: PartialCycle) {
+  if (
+    !cycle?.discharge?.maxSpecificCapacity ||
+    !cycles[0].discharge?.maxSpecificCapacity
+  ) {
     return null
   }
 
   const ratio =
-    cycle.dischargeComplete.maxSpecificCapacity /
-    cycles[0].dischargeComplete.maxSpecificCapacity
+    cycle.discharge.maxSpecificCapacity /
+    cycles[0].discharge.maxSpecificCapacity
 
   return Math.round(ratio * 10000) / 100
 }

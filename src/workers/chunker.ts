@@ -1,11 +1,10 @@
-import { chunk } from "../chunker/chunk"
-import { ChunkerConfig, ChunkerPartial } from "../chunker/chunker"
+import { chunk, Chunker, ChunkerConfig } from "../chunker/chunk"
 import Parser from "../chunker/parser"
 
 const data: {
   config: ChunkerConfig | null
   parser: Parser | null
-  chunker: ChunkerPartial | null
+  chunker: Chunker | null
 } = {
   config: null,
   parser: null,
@@ -18,7 +17,7 @@ export type ChunkWorkerRequest = {
 }
 
 export type ChunkWorkerResponse = {
-  chunker: ReturnType<typeof chunk> | null
+  chunker: Chunker | null
   result: "success" | "error"
   error?: unknown
 }
