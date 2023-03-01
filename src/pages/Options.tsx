@@ -4,14 +4,12 @@ import { useStore } from "../hooks/useStore"
 import { ColumnSelectBox } from "../primitives/ColumnSelectBox"
 import { ChunkerPreview } from "../components/ChunkerPreview"
 import { NavBar } from "../components/NavBar"
-import { useLoading } from "../hooks/useLoading"
 import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css" // optional
+import { LoadingSpinner } from "../components/LoadingSpinner"
 
 export const Options: FunctionComponent = () => {
   const { config, setConfig, parser } = useStore()
-
-  const loading = useLoading()
 
   const navBar = (
     <NavBar
@@ -67,9 +65,7 @@ export const Options: FunctionComponent = () => {
     return (
       <>
         {navBar}
-        <h2 className="py-12 text-center text-2xl">
-          {loading === "none" ? "Please Select a file." : "Working..."}
-        </h2>
+        <LoadingSpinner />
       </>
     )
 
