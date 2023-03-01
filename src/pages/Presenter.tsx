@@ -124,7 +124,7 @@ export const Presenter: FunctionComponent = () => {
         }
       />
 
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto flex flex-col gap-12">
         <OverviewChart chunkerOverview={chunker.overview} width={400} />
 
         <h2 className="text-center text-2xl">

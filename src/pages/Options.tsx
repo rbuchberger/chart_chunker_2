@@ -7,7 +7,6 @@ import { NavBar } from "../components/NavBar"
 import { useLoading } from "../hooks/useLoading"
 import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css" // optional
-import { ToggleSwitch } from "flowbite-react"
 
 export const Options: FunctionComponent = () => {
   const { config, setConfig, parser } = useStore()
