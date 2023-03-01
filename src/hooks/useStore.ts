@@ -6,9 +6,11 @@ import ChunkWorker from "../workers/chunker?worker"
 import { FlashMessage } from "../components/FlashMessage"
 import { Chunker, ChunkerConfig } from "../chunker/chunk"
 
+export type FakeFile = { name: string; fake: true }
+
 export const useStore = create<{
-  file: File | null
-  setFile: (file: File | null) => void
+  file: File | FakeFile | null
+  setFile: (file: File | FakeFile | null) => void
 
   text: string | null
   setText: (text: string | null) => void

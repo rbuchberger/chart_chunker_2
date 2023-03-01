@@ -1,5 +1,6 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useCallback } from "react"
 import { Link } from "react-router-dom"
+import { ExampleButton } from "../components/ExampleButton"
 import { NavBar } from "../components/NavBar"
 import { useStore } from "../hooks/useStore"
 
@@ -9,6 +10,7 @@ export const Root: FunctionComponent = () => {
   return (
     <>
       <NavBar
+        left={<ExampleButton />}
         right={
           file ? (
             <Link className="btn btn--nav btn--yellow" to="/options">
