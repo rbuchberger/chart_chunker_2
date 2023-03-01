@@ -37,13 +37,16 @@ export const Root: FunctionComponent = () => {
           This project is open source and can be found on{" "}
           <a
             href="https://github.com/rbuchberger/chart_chunker_2"
-            className="text-yellow-400"
+            className="text-yellow-400 hover:underline"
           >
             Github
           </a>
           . You are encouraged to submit issues, discussions, and pull requests
           as you like. If you prefer, you can contact me directly:{" "}
-          <a className="text-yellow-400" href="mailto:robert@buchberger.cc">
+          <a
+            className="text-yellow-400 hover:underline"
+            href="mailto:robert@buchberger.cc"
+          >
             robert@buchberger.cc
           </a>
         </p>
@@ -52,16 +55,43 @@ export const Root: FunctionComponent = () => {
           The old version can be found{" "}
           <a
             href="https://chart-chunker.netlify.app/"
-            className="text-yellow-400"
+            className="text-yellow-400 hover:underline"
           >
             here
           </a>
           .
         </p>
 
+        <div className="mt-6">
+          <h2 className="text-2xl">What&apos;s new?</h2>
+          <ul className="list-disc pl-6">
+            <li>
+              <a
+                className="text-yellow-400 hover:underline"
+                href="https://github.com/rbuchberger/chart_chunker_2/issues/7"
+              >
+                UI Tweaks & improvements
+              </a>{" "}
+              - loading animation, easy example data, and more.
+            </li>
+            <li>
+              Add support for half-cycles, and fix the bug where some cycles
+              weren&apos;t detected.
+            </li>
+            <li>Add option to set whether charge or discharge is first</li>
+            <li>
+              Rewrite chunker logic - it&apos;s smaller, faster, and easier to
+              modify. More changes to come!
+            </li>
+          </ul>
+        </div>
+
         <p className="mt-16 text-center">
           Created and maintained by{" "}
-          <a className="text-yellow-400" href="https://robert-buchberger.com">
+          <a
+            className="text-yellow-400 hover:underline"
+            href="https://robert-buchberger.com"
+          >
             Robert Buchberger
           </a>
         </p>
