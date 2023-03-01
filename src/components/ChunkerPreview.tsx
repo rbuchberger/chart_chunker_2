@@ -4,7 +4,11 @@ import { useStore } from "../hooks/useStore"
 export const ChunkerPreview: FunctionComponent = () => {
   const { chunker } = useStore()
 
-  const lastChargeEff = chunker?.overview?.lines.at(-1)?.[3]
+  const lastChargeEff = chunker?.overview?.lines
+    ?.slice()
+    ?.reverse()
+    ?.find((l) => l[3])?.[3]
+
   const lastRetention = chunker?.overview?.lines.at(-1)?.[4]
   const cycles = chunker?.overview?.cycleCount
 
@@ -17,13 +21,13 @@ export const ChunkerPreview: FunctionComponent = () => {
         </div>
       </li>
       <li className="flex justify-between gap-4 whitespace-nowrap">
-        Last cycle charge efficiency:
+        End charge efficiency:
         <span className="overflow-ellipsis font-semibold text-yellow-400">
           {lastChargeEff ? `${lastChargeEff}%` : "?"}
         </span>
       </li>
       <li className="flex justify-between gap-4 whitespace-nowrap">
-        Last cycle retention:
+        End retention:
         <span className="overflow-ellipsis font-semibold text-yellow-400">
           {lastRetention ? `${lastRetention}%` : "?"}
         </span>

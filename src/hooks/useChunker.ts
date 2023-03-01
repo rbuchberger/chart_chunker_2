@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { ChunkWorkerResponse } from "../workers/chunker"
-import { useStore } from "./useStore"
+import { FakeFile, useStore } from "./useStore"
 
 // There's a pipeline from file upload to chunker output, many steps of which
 // are asynchronous. There are also multiple inputs which require different
@@ -69,7 +69,7 @@ export const useChunker = () => {
 
   // Parse file into text when uploaded
   useEffect(() => {
-    if (file) readWorker.postMessage(file)
+    if (file && !(file as FakeFile).fake) readWorker.postMessage(file)
   }, [file])
 
   // Hand text to parser when text finishes

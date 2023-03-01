@@ -16,6 +16,7 @@ import Papa from "papaparse"
 import { useLoading } from "../hooks/useLoading"
 import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css" // optional
+import { LoadingSpinner } from "../components/LoadingSpinner"
 
 export const Presenter: FunctionComponent = () => {
   const { chunker, flash } = useStore()
@@ -34,9 +35,11 @@ export const Presenter: FunctionComponent = () => {
           }
         />
 
-        <h2 className="py-12 text-center text-2xl">
-          {loading === "none" ? "Please Select a file." : "Working..."}
-        </h2>
+        {loading === "none" ? (
+          <h2 className="py-12 text-center text-2xl">Please Select a file.</h2>
+        ) : (
+          <LoadingSpinner />
+        )}
       </>
     )
 
@@ -124,7 +127,7 @@ export const Presenter: FunctionComponent = () => {
         }
       />
 
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto flex flex-col gap-12">
         <OverviewChart chunkerOverview={chunker.overview} width={400} />
 
         <h2 className="text-center text-2xl">

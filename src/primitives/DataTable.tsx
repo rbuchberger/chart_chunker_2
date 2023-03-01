@@ -46,7 +46,7 @@ export const DataTable: FunctionComponent<{
       <div className="flex flex-row gap-2 align-top">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex rounded-md border border-gray-600"
+          className="flex rounded-md bg-gray-600 hover:bg-gray-500"
         >
           {collapsed ? <ChevronRight size={24} /> : <ChevronDown size={24} />}
         </button>
