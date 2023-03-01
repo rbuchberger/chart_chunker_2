@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { LineChart, Line, YAxis, XAxis, Legend, Tooltip } from "recharts"
-import { ChunkerOverview } from "../chunker/chunker"
+import { ChunkerOverview } from "../chunker/chunk"
 
 export const OverviewChart: FunctionComponent<{
   chunkerOverview: ChunkerOverview
