@@ -7,6 +7,12 @@ export type HalfCycleLocation = {
   isCharge: boolean
 }
 
+export type ColumnConfig = {
+  index: number
+  name?: string
+  coefficient?: number
+}
+
 export type CycleHalf = ReturnType<typeof buildHalf>
 
 export function buildHalf(
@@ -50,12 +56,14 @@ export function buildHalf(
 
   // Filter & present
   const processedLines = lines.map((line) => {
-    return config.keptColumns.map((c) => Math.abs(parseFloat(line[c] || "0")))
+    return config.keptColumns.map(({ index, coefficient }) => {
+      return Math.abs(parseFloat(line[index] || "0") * (coefficient || 1))
+    })
   })
 
   const prefix = isCharge ? "C" : "D"
-  const headers = config.keptColumns.map((rawColumnNumber, index) => {
-    const item = parser.columns[rawColumnNumber] || ""
+  const headers = config.keptColumns.map((config, index) => {
+    const item = config.name || parser.columns[config.index] || ""
 
     if (index === 0) {
       return (

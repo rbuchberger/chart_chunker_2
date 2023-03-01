@@ -46,15 +46,18 @@ export const Options: FunctionComponent = () => {
         event.currentTarget.getAttribute("data-index") || ""
       )
 
-      if (event.target.checked && !config.keptColumns.includes(index)) {
+      if (
+        event.target.checked &&
+        !config.keptColumns.find((c) => c.index === index)
+      ) {
         setConfig({
           ...config,
-          keptColumns: config.keptColumns.concat(index),
+          keptColumns: config.keptColumns.concat({ index }),
         })
       } else {
         setConfig({
           ...config,
-          keptColumns: config.keptColumns.filter((x) => x !== index),
+          keptColumns: config.keptColumns.filter((x) => x.index !== index),
         })
       }
     },
@@ -137,7 +140,7 @@ export const Options: FunctionComponent = () => {
                   name={col}
                   data-index={index}
                   onChange={handleColumnToggle}
-                  checked={config.keptColumns.includes(index)}
+                  checked={!!config.keptColumns.find((c) => c.index === index)}
                 />
                 <div className="select-none overflow-hidden overflow-ellipsis px-2 pt-1">
                   {col}

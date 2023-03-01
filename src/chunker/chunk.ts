@@ -1,5 +1,6 @@
 import { condenseCycle } from "./buildCycle"
 import { buildCycles } from "./buildCycles"
+import { ColumnConfig } from "./buildHalf"
 import { calcRetention } from "./calcRetention"
 import { locateCyclesBySign } from "./locateCyclesBySign"
 import Parser from "./parser"
@@ -7,7 +8,7 @@ import Parser from "./parser"
 export type ChunkerConfig = {
   chargeFirst: boolean
   splitBasis: number
-  keptColumns: number[]
+  keptColumns: ColumnConfig[]
   spcColumn: number
   voltageColumn: number
 }

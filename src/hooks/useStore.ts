@@ -46,7 +46,7 @@ export const useStore = create<{
   config: {
     chargeFirst: true,
     splitBasis: 8,
-    keptColumns: [8, 12, 14],
+    keptColumns: [{ index: 8 }, { index: 12 }, { index: 14 }],
     spcColumn: 12,
     voltageColumn: 14,
   },
