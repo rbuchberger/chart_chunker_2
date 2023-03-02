@@ -15,11 +15,15 @@ import Concatenator from "../chunker/concatenator"
 import Papa from "papaparse"
 import { useLoading } from "../hooks/useLoading"
 import Tippy from "@tippyjs/react"
-import "tippy.js/dist/tippy.css" // optional
+import "tippy.js/dist/tippy.css"
 import { LoadingSpinner } from "../components/LoadingSpinner"
 
 export const Presenter: FunctionComponent = () => {
-  const { chunker, flash } = useStore()
+  const { chunker, flash } = useStore((state) => ({
+    chunker: state.chunker,
+    flash: state.flash,
+  }))
+
   const [selectedCycle, setSelectedCycle] = useState(0)
 
   const loading = useLoading()

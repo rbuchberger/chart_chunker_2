@@ -7,7 +7,7 @@ export const ChunkerDetails: FunctionComponent<{
   selectedCycle: number
   setSelectedCycle: (cycle: number) => void
 }> = ({ selectedCycle, setSelectedCycle }) => {
-  const { chunker } = useStore()
+  const chunker = useStore((state) => state.chunker)
   const cycles = chunker?.cycles
 
   if (!cycles) return <h2 className="py-12 text-center text-xl">working...</h2>

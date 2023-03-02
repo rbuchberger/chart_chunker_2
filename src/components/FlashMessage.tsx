@@ -16,7 +16,7 @@ export type FlashMessage = {
 export const FlashMessage: FunctionComponent<{
   message: FlashMessage
 }> = ({ message }) => {
-  const { clearFlash } = useStore()
+  const clearFlash = useStore((state) => state.clearFlash)
   const icon = useMemo(() => {
     switch (message.kind) {
       case "error":

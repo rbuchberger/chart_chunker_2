@@ -5,11 +5,15 @@ import { ColumnSelectBox } from "../primitives/ColumnSelectBox"
 import { ChunkerPreview } from "../components/ChunkerPreview"
 import { NavBar } from "../components/NavBar"
 import Tippy from "@tippyjs/react"
-import "tippy.js/dist/tippy.css" // optional
+import "tippy.js/dist/tippy.css"
 import { LoadingSpinner } from "../components/LoadingSpinner"
 
 export const Options: FunctionComponent = () => {
-  const { config, setConfig, parser } = useStore()
+  const { config, setConfig, parser } = useStore((state) => ({
+    config: state.config,
+    setConfig: state.setConfig,
+    parser: state.parser,
+  }))
 
   const navBar = (
     <NavBar

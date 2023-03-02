@@ -29,7 +29,17 @@ export const useChunker = () => {
     setChunker,
     flash,
     reset,
-  } = useStore()
+  } = useStore((state) => ({
+    file: state.file,
+    text: state.text,
+    setText: state.setText,
+    parser: state.parser,
+    setParser: state.setParser,
+    config: state.config,
+    setChunker: state.setChunker,
+    flash: state.flash,
+    reset: state.reset,
+  }))
 
   readWorker.onmessage = (e) => {
     if (e.data.result === "error") {

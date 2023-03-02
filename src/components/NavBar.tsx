@@ -11,7 +11,10 @@ export const NavBar: FunctionComponent<{
   right = <div className="w-32" />,
   left = <div className="w-32" />,
 }) => {
-  const { file, setFile } = useStore()
+  const { file, setFile } = useStore((state) => ({
+    file: state.file,
+    setFile: state.setFile,
+  }))
 
   const enableNext = !!file
 
