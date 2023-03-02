@@ -53,13 +53,11 @@ export const useStore = create(
     setChunker: (chunker) => set({ chunker }),
 
     flash: (message) => {
-      const id = Math.random().toString()
-
+      const id = Math.random()
       set((state) => {
         state.flashMessages.push({ id, ...message })
       })
-
-      setTimeout(() => get().clearFlash(id), 5000)
+      setTimeout(() => get().clearFlash(id), 4000)
     },
 
     clearFlash: (id) => {

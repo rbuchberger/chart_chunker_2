@@ -10,7 +10,7 @@ import { useStore } from "../hooks/useStore"
 export type FlashMessage = {
   content: React.ReactNode
   kind: "error" | "success" | "info"
-  id: string
+  id: number
 }
 
 export const FlashMessage: FunctionComponent<{
