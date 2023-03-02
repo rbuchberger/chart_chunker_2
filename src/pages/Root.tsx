@@ -1,11 +1,11 @@
-import { FunctionComponent, useCallback } from "react"
+import { FunctionComponent } from "react"
 import { Link } from "react-router-dom"
 import { ExampleButton } from "../components/ExampleButton"
 import { NavBar } from "../components/NavBar"
 import { useStore } from "../hooks/useStore"
 
 export const Root: FunctionComponent = () => {
-  const { file } = useStore()
+  const file = useStore((state) => state.file)
 
   return (
     <>
@@ -65,6 +65,7 @@ export const Root: FunctionComponent = () => {
         <div className="mt-6">
           <h2 className="text-2xl">What&apos;s new?</h2>
           <ul className="list-disc pl-6">
+            <li>Column Modifications! Check out the options page.</li>
             <li>
               <a
                 className="text-yellow-400 hover:underline"

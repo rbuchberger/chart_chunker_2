@@ -10,13 +10,13 @@ import { useStore } from "../hooks/useStore"
 export type FlashMessage = {
   content: React.ReactNode
   kind: "error" | "success" | "info"
-  id: string
+  id: number
 }
 
 export const FlashMessage: FunctionComponent<{
   message: FlashMessage
 }> = ({ message }) => {
-  const { clearFlash } = useStore()
+  const clearFlash = useStore((state) => state.clearFlash)
   const icon = useMemo(() => {
     switch (message.kind) {
       case "error":

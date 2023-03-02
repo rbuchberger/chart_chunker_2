@@ -1,5 +1,6 @@
 import { condenseCycle } from "./buildCycle"
 import { buildCycles } from "./buildCycles"
+import { ColumnConfig } from "./buildHalf"
 import { calcRetention } from "./calcRetention"
 import { locateCyclesBySign } from "./locateCyclesBySign"
 import Parser from "./parser"
@@ -7,7 +8,7 @@ import Parser from "./parser"
 export type ChunkerConfig = {
   chargeFirst: boolean
   splitBasis: number
-  keptColumns: number[]
+  keptColumns: ColumnConfig[]
   spcColumn: number
   voltageColumn: number
 }
@@ -32,7 +33,7 @@ export function chunk(context: Context) {
   // Decorate
   const chargeEffArray = cyclesFull.map((c) => c.chargeEfficiency)
   const retentionArray = cyclesFull.map((c) => calcRetention(cyclesFull, c))
-  const keptColumns = config.keptColumns.slice().sort() // order matters
+  const keptColumns = config.keptColumns.slice()
   const cycles = cyclesFull.map((c) => condenseCycle(c))
   const overview = {
     headers: [

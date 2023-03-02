@@ -6,7 +6,12 @@ import { useStore } from "../hooks/useStore"
 
 export const ExampleButton: FunctionComponent = () => {
   const [loading, setLoading] = useState(false)
-  const { setText, setFile, flash } = useStore()
+  const { setText, setFile, flash } = useStore((state) => ({
+    setText: state.setText,
+    setFile: state.setFile,
+    flash: state.flash,
+  }))
+
   const loadSample = useCallback(() => {
     setLoading(true)
     fetch("/sample1.txt")

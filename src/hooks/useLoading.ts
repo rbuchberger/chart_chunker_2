@@ -3,7 +3,12 @@ import { useStore } from "./useStore"
 export type LoadingState = "none" | "reading" | "parsing" | "chunking" | "done"
 
 export const useLoading = () => {
-  const { file, text, parser, chunker } = useStore()
+  const { file, text, parser, chunker } = useStore((state) => ({
+    file: state.file,
+    text: state.text,
+    parser: state.parser,
+    chunker: state.chunker,
+  }))
 
   if (!file) {
     return "none"

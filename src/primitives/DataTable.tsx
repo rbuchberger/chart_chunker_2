@@ -16,7 +16,7 @@ export const DataTable: FunctionComponent<{
   startCollapsed?: boolean
   title?: string
 }> = ({ headers, lines, startCollapsed = false, title }) => {
-  const { flash } = useStore()
+  const flash = useStore((state) => state.flash)
   const [collapsed, setCollapsed] = useState(startCollapsed)
   const copy = useTableCopy
 

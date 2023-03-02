@@ -5,11 +5,16 @@ import { ColumnSelectBox } from "../primitives/ColumnSelectBox"
 import { ChunkerPreview } from "../components/ChunkerPreview"
 import { NavBar } from "../components/NavBar"
 import Tippy from "@tippyjs/react"
-import "tippy.js/dist/tippy.css" // optional
+import "tippy.js/dist/tippy.css"
 import { LoadingSpinner } from "../components/LoadingSpinner"
+import { ColumnSettingsItem } from "../components/ColumnSettingsItem"
 
 export const Options: FunctionComponent = () => {
-  const { config, setConfig, parser } = useStore()
+  const { config, updateConfig, parser } = useStore((state) => ({
+    config: state.config,
+    updateConfig: state.updateConfig,
+    parser: state.parser,
+  }))
 
   const navBar = (
     <NavBar
@@ -30,36 +35,9 @@ export const Options: FunctionComponent = () => {
     />
   )
 
-  const handleChange = useCallback(
-    (event: ChangeEvent<HTMLSelectElement>) => {
-      setConfig({
-        ...config,
-        [event.target.name]: event.target.value,
-      })
-    },
-    [config]
-  )
-
-  const handleColumnToggle = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const index = parseInt(
-        event.currentTarget.getAttribute("data-index") || ""
-      )
-
-      if (event.target.checked && !config.keptColumns.includes(index)) {
-        setConfig({
-          ...config,
-          keptColumns: config.keptColumns.concat(index),
-        })
-      } else {
-        setConfig({
-          ...config,
-          keptColumns: config.keptColumns.filter((x) => x !== index),
-        })
-      }
-    },
-    [config]
-  )
+  const handleChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+    updateConfig({ [event.target.name]: event.target.value })
+  }, [])
 
   if (!parser)
     return (
@@ -85,9 +63,7 @@ export const Options: FunctionComponent = () => {
               type="checkbox"
               name="chargeFirst"
               checked={config.chargeFirst}
-              onChange={(e) =>
-                setConfig({ ...config, chargeFirst: e.target.checked })
-              }
+              onChange={(e) => updateConfig({ chargeFirst: e.target.checked })}
             />
           </label>
         </Tippy>
@@ -123,27 +99,33 @@ export const Options: FunctionComponent = () => {
       <ChunkerPreview />
 
       <section className="flex flex-col gap-6 rounded-md bg-gray-600 p-7">
-        <Tippy content="Selected columns will be included when you copy cycle data.">
-          <h2 className="text-2xl">Which columns would you like to keep?</h2>
-        </Tippy>
+        <div className="flex">
+          <Tippy content="These settings apply when you copy cycle data (not analysis)">
+            <h2 className="text-2xl">How do you want your data?</h2>
+          </Tippy>
+        </div>
 
-        <ul className="grid gap-x-6 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <ul className="flex flex-col gap-y-3">
+          <li className="grid grid-cols-5 gap-4">
+            <div className="col-span-2 flex">
+              <Tippy content="Columns not selected will be ignored.">
+                <h3 className="">Included?</h3>
+              </Tippy>
+            </div>
+            <div className="col-span-2 flex">
+              <Tippy content="Set a new name for column headers.">
+                <h3 className="">Renamed?</h3>
+              </Tippy>
+            </div>
+
+            <div className="flex">
+              <Tippy content="Multiply all values by some coefficient.">
+                <h3 className="">Multiplied?</h3>
+              </Tippy>
+            </div>
+          </li>
           {parser.columns.map((col, index) => (
-            <li key={index} className="grow rounded-md bg-gray-600">
-              <label className="flex h-full cursor-pointer items-center whitespace-nowrap px-2 py-1 font-mono text-sm leading-5">
-                <input
-                  type="checkbox"
-                  className="rounded-full text-yellow-500 focus:ring-yellow-500"
-                  name={col}
-                  data-index={index}
-                  onChange={handleColumnToggle}
-                  checked={config.keptColumns.includes(index)}
-                />
-                <div className="select-none overflow-hidden overflow-ellipsis px-2 pt-1">
-                  {col}
-                </div>
-              </label>
-            </li>
+            <ColumnSettingsItem key={index} index={index} col={col} />
           ))}
         </ul>
       </section>
