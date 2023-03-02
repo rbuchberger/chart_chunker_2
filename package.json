@@ -26,7 +26,6 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
     "recharts": "^2.4.3",
-    "use-debounced-effect": "^2.0.1",
     "zustand": "^4.3.3"
   },
   "devDependencies": {

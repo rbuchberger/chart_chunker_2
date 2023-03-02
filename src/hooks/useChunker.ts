@@ -5,7 +5,6 @@ import { useStore } from "./useStore"
 import ParseWorker from "../workers/parser?worker"
 import ReadWorker from "../workers/filereader?worker"
 import ChunkWorker from "../workers/chunker?worker"
-import useDebouncedEffect from "use-debounced-effect"
 
 export type FakeFile = { name: string; fake: true }
 
@@ -95,8 +94,10 @@ export const useChunker = () => {
     if (text) parseWorker.postMessage(text)
   }, [text])
 
-  // Pass config to chunker. Config changes frequently, so we debounce it.
-  useDebouncedEffect(() => chunkWorker.postMessage({ config }), 500, [config])
+  // Pass config to chunker
+  useEffect(() => {
+    chunkWorker.postMessage({ config })
+  }, [config])
 
   // Pass parser to chunker
   useEffect(() => {
