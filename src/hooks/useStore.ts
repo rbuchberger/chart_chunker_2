@@ -4,28 +4,27 @@ import { FlashMessage } from "../components/FlashMessage"
 import { Chunker, ChunkerConfig } from "../chunker/chunk"
 import { FakeFile } from "./useChunker"
 
-export const useStore = create<{
+type State = Readonly<{
   file: File | FakeFile | null
-  setFile: (file: File | FakeFile | null) => void
-
   text: string | null
-  setText: (text: string | null) => void
-
   parser: Parser | null
-  setParser: (parser: Parser | null) => void
-
   config: ChunkerConfig
-  setConfig: (parser: ChunkerConfig) => void
-
   chunker: Chunker | null
-  setChunker: (chunker: Chunker | null) => void
-
   flashMessages: FlashMessage[]
+}>
+
+type Actions = Readonly<{
+  setFile: (file: State["file"]) => void
+  setText: (text: State["text"]) => void
+  setParser: (parser: State["parser"]) => void
+  setConfig: (parser: State["config"]) => void
+  setChunker: (chunker: State["chunker"]) => void
   flash: (message: Omit<FlashMessage, "id">) => void
   clearFlash: (id: string) => void
-
   reset: () => void
-}>((set, get) => ({
+}>
+
+export const useStore = create<State & Actions>((set, get) => ({
   file: null,
   setFile: (file) => set({ file }),
 
