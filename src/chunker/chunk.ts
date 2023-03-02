@@ -33,7 +33,7 @@ export function chunk(context: Context) {
   // Decorate
   const chargeEffArray = cyclesFull.map((c) => c.chargeEfficiency)
   const retentionArray = cyclesFull.map((c) => calcRetention(cyclesFull, c))
-  const keptColumns = config.keptColumns.slice().sort() // order matters
+  const keptColumns = config.keptColumns.slice()
   const cycles = cyclesFull.map((c) => condenseCycle(c))
   const overview = {
     headers: [
