@@ -1,12 +1,8 @@
 import { create } from "zustand"
 import Parser from "../chunker/parser"
-import ParseWorker from "../workers/parser?worker"
-import ReadWorker from "../workers/filereader?worker"
-import ChunkWorker from "../workers/chunker?worker"
 import { FlashMessage } from "../components/FlashMessage"
 import { Chunker, ChunkerConfig } from "../chunker/chunk"
-
-export type FakeFile = { name: string; fake: true }
+import { FakeFile } from "./useChunker"
 
 export const useStore = create<{
   file: File | FakeFile | null
@@ -23,10 +19,6 @@ export const useStore = create<{
 
   chunker: Chunker | null
   setChunker: (chunker: Chunker | null) => void
-
-  parseWorker: Worker
-  chunkWorker: Worker
-  readWorker: Worker
 
   flashMessages: FlashMessage[]
   flash: (message: Omit<FlashMessage, "id">) => void
@@ -54,10 +46,6 @@ export const useStore = create<{
 
   chunker: null,
   setChunker: (chunker) => set({ chunker }),
-
-  parseWorker: new ParseWorker(),
-  readWorker: new ReadWorker(),
-  chunkWorker: new ChunkWorker(),
 
   flashMessages: [],
   flash: (message) => {

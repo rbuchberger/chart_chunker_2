@@ -1,6 +1,12 @@
 import { useEffect } from "react"
 import { ChunkWorkerResponse } from "../workers/chunker"
-import { FakeFile, useStore } from "./useStore"
+import { useStore } from "./useStore"
+
+import ParseWorker from "../workers/parser?worker"
+import ReadWorker from "../workers/filereader?worker"
+import ChunkWorker from "../workers/chunker?worker"
+
+export type FakeFile = { name: string; fake: true }
 
 // There's a pipeline from file upload to chunker output, many steps of which
 // are asynchronous. There are also multiple inputs which require different
@@ -8,6 +14,10 @@ import { FakeFile, useStore } from "./useStore"
 // hooks, each of which has the previous steps as part of its dependency array.
 //
 // file upload -> FileReader read as text -> get config -> run chunker
+const readWorker = new ReadWorker()
+const parseWorker = new ParseWorker()
+const chunkWorker = new ChunkWorker()
+
 export const useChunker = () => {
   const {
     file,
@@ -17,9 +27,6 @@ export const useChunker = () => {
     setParser,
     config,
     setChunker,
-    parseWorker,
-    readWorker,
-    chunkWorker,
     flash,
     reset,
   } = useStore()
