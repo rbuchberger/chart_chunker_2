@@ -65,6 +65,7 @@ export const Root: FunctionComponent = () => {
         <div className="mt-6">
           <h2 className="text-2xl">What&apos;s new?</h2>
           <ul className="list-disc pl-6">
+            <li>Column Modifications! Check out the options page.</li>
             <li>
               <a
                 className="text-yellow-400 hover:underline"
