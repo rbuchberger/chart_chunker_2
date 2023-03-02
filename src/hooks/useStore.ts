@@ -38,7 +38,10 @@ export type ColumnConfigUpdate = Partial<ColumnConfig> & { index: number }
 const initialConfig: ChunkerConfig = {
   chargeFirst: true,
   splitBasis: 8,
-  keptColumns: [{ index: 12, name: "Specific Capacity[Ah/g]" }, { index: 14 }],
+  keptColumns: [
+    { index: 12, name: "Specific Capacity (mAh/g)", coefficient: 1000 },
+    { index: 14, name: "Electrode Potential (V)" },
+  ],
   spcColumn: 12,
   voltageColumn: 14,
 }
