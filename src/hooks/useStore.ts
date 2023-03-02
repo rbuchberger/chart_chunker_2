@@ -2,6 +2,7 @@ import { create } from "zustand"
 import Parser from "../chunker/parser"
 import { FlashMessage } from "../components/FlashMessage"
 import { Chunker, ChunkerConfig } from "../chunker/chunk"
+import { immer } from "zustand/middleware/immer"
 import { FakeFile } from "./useChunker"
 
 type State = Readonly<{
@@ -20,56 +21,62 @@ type Actions = Readonly<{
   setConfig: (parser: State["config"]) => void
   setChunker: (chunker: State["chunker"]) => void
   flash: (message: Omit<FlashMessage, "id">) => void
-  clearFlash: (id: string) => void
+  clearFlash: (id: FlashMessage["id"]) => void
   reset: () => void
 }>
 
-export const useStore = create<State & Actions>((set, get) => ({
+const initialConfig: ChunkerConfig = {
+  chargeFirst: true,
+  splitBasis: 8,
+  keptColumns: [{ index: 8 }, { index: 12 }, { index: 14 }],
+  spcColumn: 12,
+  voltageColumn: 14,
+}
+
+const initialState: State = {
   file: null,
-  setFile: (file) => set({ file }),
-
   text: null,
-  setText: (text) => set({ text }),
-
+  config: initialConfig,
   parser: null,
-  setParser: (parser) => set({ parser }),
-
-  config: {
-    chargeFirst: true,
-    splitBasis: 8,
-    keptColumns: [{ index: 8 }, { index: 12 }, { index: 14 }],
-    spcColumn: 12,
-    voltageColumn: 14,
-  },
-  setConfig: (config) => set({ config }),
-
   chunker: null,
-  setChunker: (chunker) => set({ chunker }),
-
   flashMessages: [],
-  flash: (message) => {
-    const id = Math.random().toString()
-    set((state) => ({
-      flashMessages: [...state.flashMessages, { id, ...message }],
-    }))
+}
 
-    setTimeout(() => {
-      get().clearFlash(id)
-    }, 5000)
-  },
+export const useStore = create(
+  immer<State & Actions>((set, get) => ({
+    ...initialState,
 
-  clearFlash: (id) => {
-    set((state) => ({
-      flashMessages: state.flashMessages.filter((m) => m.id !== id),
-    }))
-  },
+    setFile: (file) => set({ file }),
+    setText: (text) => set({ text }),
+    setParser: (parser) => set({ parser }),
+    setConfig: (config) => set({ config }),
+    setChunker: (chunker) => set({ chunker }),
 
-  reset: () => {
-    set({
-      file: null,
-      text: null,
-      parser: null,
-      chunker: null,
-    })
-  },
-}))
+    flash: (message) => {
+      const id = Math.random().toString()
+
+      set((state) => {
+        state.flashMessages.push({ id, ...message })
+      })
+
+      setTimeout(() => get().clearFlash(id), 5000)
+    },
+
+    clearFlash: (id) => {
+      set((state) => {
+        const index = state.flashMessages.findIndex((m) => m.id === id)
+        if (index !== -1) state.flashMessages.splice(index, 1)
+        else console.error("Tried to remove non-existent flash message")
+      })
+    },
+
+    reset: () => {
+      set({
+        file: null,
+        text: null,
+        parser: null,
+        chunker: null,
+      })
+    },
+  }))
+)
