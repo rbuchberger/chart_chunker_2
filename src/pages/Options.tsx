@@ -8,6 +8,7 @@ import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css"
 import { LoadingSpinner } from "../components/LoadingSpinner"
 import { ColumnSettingsItem } from "../components/ColumnSettingsItem"
+import { useLoading } from "../hooks/useLoading"
 
 export const Options: FunctionComponent = () => {
   const { config, updateConfig, parser } = useStore((state) => ({
@@ -39,13 +40,26 @@ export const Options: FunctionComponent = () => {
     updateConfig({ [event.target.name]: event.target.value })
   }, [])
 
-  if (!parser)
-    return (
-      <>
-        {navBar}
-        <LoadingSpinner />
-      </>
-    )
+  switch (useLoading()) {
+    case "none":
+      return (
+        <>
+          {navBar}
+          <h2 className="py-12 text-center text-2xl">Please Select a file.</h2>
+        </>
+      )
+    case "reading":
+    case "parsing":
+      return (
+        <>
+          {navBar}
+          <LoadingSpinner />
+        </>
+      )
+  }
+
+  // Switch case above will ensure this doesn't happen, but TS doesn't know that.
+  if (!parser) return <></>
 
   return (
     <form className="flex flex-col items-center gap-10">
