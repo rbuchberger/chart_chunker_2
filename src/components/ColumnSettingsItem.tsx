@@ -7,7 +7,7 @@ export const ColumnSettingsItem: FunctionComponent<{
   index: number
 }> = ({ col, index }) => {
   const { config, removeKeptColumn, upsertKeptColumn } = useStore((state) => ({
-    config: state.config.keptColumns.find((c) => c.index === index),
+    config: state.config.keptCols.find((c) => c.index === index),
     removeKeptColumn: state.removeKeptColumn,
     upsertKeptColumn: state.upsertKeptColumn,
   }))

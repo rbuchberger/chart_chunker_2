@@ -12,11 +12,19 @@ export function buildCycle(
   cycleNumber: number,
   context: Context
 ) {
+  const { config } = context
   // Setup
   const halves = [
     buildHalf(a, cycleNumber, context),
     buildHalf(b, cycleNumber, context),
   ]
+
+  const cspHeader =
+    config.keptCols.find((c) => c.index === config.spcCol)?.name ||
+    "Specific Capacity"
+
+  const vHeader =
+    config.keptCols.find((c) => c.index === config.vCol)?.name || "Voltage"
 
   const chargeComplete = halves.find((half) => half?.isCharge)
   const dischargeComplete = halves.find((half) => half?.isDischarge)
@@ -29,8 +37,8 @@ export function buildCycle(
   const processedLines = new Concatenator(compact(halves))
     .concatenatedWithHeaders
 
-  const chargeCap = chargeComplete?.maxSpecificCapacity
-  const dischargeCap = dischargeComplete?.maxSpecificCapacity
+  const chargeCap = chargeComplete?.maxCsp
+  const dischargeCap = dischargeComplete?.maxCsp
   const chargeRatio =
     chargeCap !== undefined && dischargeCap !== undefined
       ? dischargeCap / chargeCap
@@ -46,33 +54,17 @@ export function buildCycle(
     headers: ["", "Charge", "Discharge"],
     lines: [
       // split basis average
-      [
-        "Average Current",
-        charge?.averageSplitBasis,
-        discharge?.averageSplitBasis,
-      ],
+      ["Average Current", charge?.avgSplitBasis, discharge?.avgSplitBasis],
       // charge & discharge max voltage
-      ["Max Voltage", charge?.maxVoltage, discharge?.maxVoltage],
+      [`Max ${vHeader}`, charge?.maxV, discharge?.maxV],
       // charge & discharge min voltage
-      ["Min Voltage", charge?.minVoltage, discharge?.minVoltage],
+      [`Min ${vHeader}`, charge?.minV, discharge?.minV],
       // charge & discharge max spc
-      [
-        "Max Specific Capacity",
-        charge?.maxSpecificCapacity,
-        discharge?.maxSpecificCapacity,
-      ],
+      [`Max ${cspHeader}`, charge?.maxCsp, discharge?.maxCsp],
       // charge & discharge min min spc
-      [
-        "Min Specific Capacity",
-        charge?.minSpecificCapacity,
-        discharge?.minSpecificCapacity,
-      ],
+      [`Min ${cspHeader}`, charge?.minCsp, discharge?.minCsp],
       // overall spc
-      [
-        "Overall Specific Capacity",
-        charge?.specificCapacity,
-        discharge?.specificCapacity,
-      ],
+      [`Overall ${cspHeader}`, charge?.csp, discharge?.csp],
     ],
   }
 

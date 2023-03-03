@@ -8,9 +8,9 @@ import Parser from "./parser"
 export type ChunkerConfig = {
   chargeFirst: boolean
   splitBasis: number
-  keptColumns: ColumnConfig[]
-  spcColumn: number
-  voltageColumn: number
+  keptCols: ColumnConfig[]
+  spcCol: number
+  vCol: number
 }
 
 export type Context = { config: ChunkerConfig; parser: Parser }
@@ -26,6 +26,10 @@ export type Chunker = ReturnType<typeof chunk>
 export function chunk(context: Context) {
   const { config, parser } = context
 
+  const cspHeader =
+    config.keptCols.find((c) => c.index === config.spcCol)?.name ||
+    "Specific Capacity"
+
   // Split cycles
   const locations = locateCyclesBySign(parser.lines, config.splitBasis)
   const { cycles: cyclesFull, errors } = buildCycles(locations, context)
@@ -33,22 +37,21 @@ export function chunk(context: Context) {
   // Decorate
   const chargeEffArray = cyclesFull.map((c) => c.chargeEfficiency)
   const retentionArray = cyclesFull.map((c) => calcRetention(cyclesFull, c))
-  const keptColumns = config.keptColumns.slice()
   const cycles = cyclesFull.map((c) => condenseCycle(c))
   const overview = {
     headers: [
       "Cycle #",
-      `${config.chargeFirst ? "Charge" : "Discharge"} Specific Capacity`,
-      `${config.chargeFirst ? "Discharge" : "Charge"} Specific Capacity`,
-      "Charge Efficiency [%]",
-      "Retention [%]",
+      `${config.chargeFirst ? "Charge" : "Discharge"} ${cspHeader}`,
+      `${config.chargeFirst ? "Discharge" : "Charge"} ${cspHeader}`,
+      "Charge Efficiency (%)",
+      "Retention (%)",
     ],
 
     lines: cycles.map((cycle) => {
       return [
         cycle.cycleNumber,
-        cycle.charge?.specificCapacity,
-        cycle.discharge?.specificCapacity,
+        cycle.charge?.csp,
+        cycle.discharge?.csp,
         cycle.chargeEfficiency,
         calcRetention(cycles, cycle),
       ]
@@ -62,6 +65,5 @@ export function chunk(context: Context) {
     chargeEffArray,
     retentionArray,
     overview,
-    keptColumns,
   } as const
 }

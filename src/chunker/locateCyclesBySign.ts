@@ -9,7 +9,7 @@ export const locateCyclesBySign = (lines: RawLine[], splitBasis: number) => {
   function endLastCycle(index: number) {
     // Typescript doesn't mention that this could be undefined
     const lastCycle = cycles[cycles.length - 1]
-    if (lastCycle) lastCycle.endExclusive ||= index
+    if (lastCycle) lastCycle.end ||= index
   }
 
   lines.forEach((line, index) => {
