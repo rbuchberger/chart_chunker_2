@@ -2,6 +2,8 @@ import { FunctionComponent } from "react"
 import { useStore } from "../hooks/useStore"
 import { DataTable } from "../primitives/DataTable"
 import { CyclePicker } from "./CyclePicker"
+import { CycleProfile } from "./CycleProfile"
+import { LoadingSpinner } from "./LoadingSpinner"
 
 export const ChunkerDetails: FunctionComponent<{
   selectedCycle: number
@@ -10,7 +12,7 @@ export const ChunkerDetails: FunctionComponent<{
   const chunker = useStore((state) => state.chunker)
   const cycles = chunker?.cycles
 
-  if (!cycles) return <h2 className="py-12 text-center text-xl">working...</h2>
+  if (!cycles) return <LoadingSpinner />
 
   return (
     <>
@@ -19,6 +21,8 @@ export const ChunkerDetails: FunctionComponent<{
         setSelectedCycle={setSelectedCycle}
         cycles={cycles}
       />
+
+      <CycleProfile cycle={cycles[selectedCycle]} />
 
       <DataTable
         title="Analysis"
