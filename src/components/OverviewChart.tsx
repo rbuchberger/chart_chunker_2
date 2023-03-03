@@ -51,7 +51,7 @@ export const OverviewChart: FunctionComponent<{
             Retention<sub>n</sub> = 100 ·
           </div>
           <div className="text-center">
-            <div className="mb-1 border-b border-b-gray-50">
+            <div className="mb-1 pb-1 border-b border-b-gray-50">
               Specific Capacity<sub>n</sub>
             </div>
             <div>

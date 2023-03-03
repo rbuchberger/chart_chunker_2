@@ -121,7 +121,7 @@ export const Presenter: FunctionComponent = () => {
         right={
           <Tippy
             placement="bottom"
-            content="Copy all cycles to the clipboard, side-by-side"
+            content="Copy all cycles to the clipboard, side-by-side, in tab-separated CSV."
           >
             <button onClick={copyAll} className="btn btn--nav btn--gray">
               <Clipboard size={18} />
