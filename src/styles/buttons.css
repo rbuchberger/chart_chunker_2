@@ -14,6 +14,10 @@
   @apply cursor-pointer bg-yellow-600 hover:bg-yellow-500
 }
 
+.btn--loading {
+  @apply bg-gray-700 cursor-wait opacity-75 select-none
+}
+
 .btn--disabled {
-  @apply bg-gray-700 cursor-not-allowed
+  @apply bg-gray-700 select-none
 }
