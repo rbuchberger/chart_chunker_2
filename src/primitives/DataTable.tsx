@@ -19,6 +19,7 @@ export const DataTable: FunctionComponent<{
   const flash = useStore((state) => state.flash)
   const [collapsed, setCollapsed] = useState(startCollapsed)
   const copy = useTableCopy
+  const toggle = () => setCollapsed(!collapsed)
 
   const handleCopy = () => {
     copy([headers].concat(lines))
@@ -29,12 +30,13 @@ export const DataTable: FunctionComponent<{
         flash({ kind: "error", content: "Unable to copy table. Sorry :(" })
       })
   }
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-row justify-between">
         <h3 className="text-xl">{title}</h3>
         <Tippy
-          content={`Copy this ${headers.length}x${lines.length} table to the clipboard`}
+          content={`Copy this ${headers.length}x${lines.length} table to the clipboard in tab-separated CSV format`}
         >
           <button onClick={handleCopy} className="btn btn--gray">
             <Clipboard size={18} />
@@ -43,26 +45,24 @@ export const DataTable: FunctionComponent<{
         </Tippy>
       </div>
 
-      <div className="flex flex-row gap-2 align-top">
+      <div className="flex flex-row gap-4 align-top">
         <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="flex rounded-md bg-gray-600 hover:bg-gray-500"
+          onClick={toggle}
+          className="flex rounded-md bg-gray-600 py-2 px-1 hover:bg-gray-500"
         >
           {collapsed ? <ChevronRight size={24} /> : <ChevronDown size={24} />}
         </button>
 
         <div className="w-full overflow-y-auto rounded-md bg-gray-600">
           <table className="w-full table-auto text-right">
-            <thead>
+            <thead onClick={toggle} className="cursor-pointer">
               <tr>
                 {headers.map((header, index) => (
                   <th
-                    className="sticky top-0 max-w-full overflow-x-hidden overflow-ellipsis whitespace-nowrap bg-gray-600 pt-2 align-bottom text-sm"
+                    className="max-w-full overflow-x-hidden overflow-ellipsis whitespace-nowrap border-r border-b border-r-gray-500 border-b-gray-200 bg-gray-600 pt-2 align-bottom text-sm"
                     key={index}
                   >
-                    <div className="h-full border-b border-r border-b-gray-200 border-r-gray-500 pr-2">
-                      {header}
-                    </div>
+                    <div className="h-full px-2">{header}</div>
                   </th>
                 ))}
               </tr>
@@ -76,7 +76,10 @@ export const DataTable: FunctionComponent<{
             >
               {collapsed ||
                 lines.map((line, index) => (
-                  <tr key={index} className="hover:bg-gray-500">
+                  <tr
+                    key={index}
+                    className="border-b border-b-gray-500 hover:border-b-white"
+                  >
                     {line.map((cell, index) => (
                       <td
                         className="border-r border-r-gray-500 pr-2"
