@@ -64,6 +64,18 @@ export const Root: FunctionComponent = () => {
 
         <div className="mt-6">
           <h2 className="text-2xl">What&apos;s new?</h2>
+
+          <p className="italic">
+            For a detailed list, see the{" "}
+            <a
+              href="https://github.com/rbuchberger/chart_chunker_2/commits/main"
+              className="text-yellow-400 hover:underline"
+            >
+              commit history
+            </a>
+            .
+          </p>
+
           <ul className="list-disc pl-6">
             <li>Column Modifications! Check out the options page.</li>
             <li>
@@ -87,15 +99,19 @@ export const Root: FunctionComponent = () => {
           </ul>
         </div>
 
-        <p className="mt-16 text-center">
-          Created and maintained by{" "}
-          <a
-            className="text-yellow-400 hover:underline"
-            href="https://robert-buchberger.com"
-          >
-            Robert Buchberger
-          </a>
-        </p>
+        <div className="mt-16 flex flex-row justify-center gap-3">
+          <p>GPLv3</p>
+          <div>·</div>
+          <p className="text-center">
+            Created and maintained by{" "}
+            <a
+              className="text-yellow-400 hover:underline"
+              href="https://robert-buchberger.com"
+            >
+              Robert Buchberger
+            </a>
+          </p>
+        </div>
       </div>
     </>
   )
