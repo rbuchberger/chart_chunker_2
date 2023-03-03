@@ -38,12 +38,12 @@ export type ColumnConfigUpdate = Partial<ColumnConfig> & { index: number }
 const initialConfig: ChunkerConfig = {
   chargeFirst: true,
   splitBasis: 8,
-  keptColumns: [
+  keptCols: [
     { index: 12, name: "Specific Capacity (mAh/g)", coefficient: 1000 },
     { index: 14, name: "Electrode Potential (V)" },
   ],
-  spcColumn: 12,
-  voltageColumn: 14,
+  spcCol: 12,
+  vCol: 14,
 }
 
 const initialState: State = {
@@ -89,28 +89,28 @@ export const useStore = create(
 
     removeKeptColumn: (columnNumber: number) => {
       set((state) => {
-        const index = state.config.keptColumns.findIndex(
+        const index = state.config.keptCols.findIndex(
           (c) => c.index === columnNumber
         )
 
-        if (index !== -1) state.config.keptColumns.splice(index, 1)
+        if (index !== -1) state.config.keptCols.splice(index, 1)
         else console.error("Tried to remove non-existent kept column")
       })
     },
 
     upsertKeptColumn: (config: ColumnConfigUpdate) => {
       set((state) => {
-        const location = state.config.keptColumns.findIndex(
+        const location = state.config.keptCols.findIndex(
           (c) => c.index === config.index
         )
 
-        const original = state.config.keptColumns[location]
+        const original = state.config.keptCols[location]
 
         if (original) {
-          state.config.keptColumns[location] = { ...original, ...config }
+          state.config.keptCols[location] = { ...original, ...config }
         } else {
-          state.config.keptColumns.push(config)
-          state.config.keptColumns.sort((a, b) => a.index - b.index)
+          state.config.keptCols.push(config)
+          state.config.keptCols.sort((a, b) => a.index - b.index)
         }
       })
     },

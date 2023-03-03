@@ -95,7 +95,7 @@ export const Options: FunctionComponent = () => {
           name="voltageColumn"
           label="Voltage"
           helpText="Which column shows the voltage you are interested in? It's used to show min & max values."
-          value={config.voltageColumn}
+          value={config.vCol}
           columns={parser.columnItems}
           onChange={handleChange}
         />
@@ -104,7 +104,7 @@ export const Options: FunctionComponent = () => {
           name="spcColumn"
           label="Specific Capacity"
           helpText="Which column shows the specific capacity you are interested in? It's used to calculate capacity and retention."
-          value={config.spcColumn}
+          value={config.spcCol}
           columns={parser.columnItems}
           onChange={handleChange}
         />
