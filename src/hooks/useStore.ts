@@ -31,6 +31,7 @@ type Actions = Readonly<{
   flash: (message: Omit<FlashMessage, "id">) => void
   clearFlash: (id: FlashMessage["id"]) => void
   reset: () => void
+  resetConfig: () => void
 }>
 
 export type ColumnConfigUpdate = Partial<ColumnConfig> & { index: number }
@@ -122,6 +123,10 @@ export const useStore = create(
         parser: null,
         chunker: null,
       })
+    },
+
+    resetConfig: () => {
+      set({ config: { ...initialConfig } })
     },
   }))
 )
