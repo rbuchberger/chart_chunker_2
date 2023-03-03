@@ -15,14 +15,16 @@ export const ColumnSelectBox: FunctionComponent<{
 }> = ({ name, value, onChange, columns, label, helpText }) => {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor="splitBasis">{label}</label>
+      <label htmlFor="splitBasis" className="text-sm">
+        {label}
+      </label>
       <Tippy content={helpText} disabled={!helpText} placement="bottom">
         <select
           id={name}
           name={name}
           value={value}
           onChange={onChange}
-          className="rounded-md bg-gray-500 font-mono"
+          className="rounded-md bg-gray-500 font-mono text-sm"
         >
           {columns.map((column) => (
             <option key={column.value} value={column.value}>

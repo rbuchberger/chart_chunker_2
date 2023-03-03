@@ -9,11 +9,13 @@ import "tippy.js/dist/tippy.css"
 import { LoadingSpinner } from "../components/LoadingSpinner"
 import { ColumnSettingsItem } from "../components/ColumnSettingsItem"
 import { useLoading } from "../hooks/useLoading"
+import { ArrowPath } from "@styled-icons/heroicons-solid"
 
 export const Options: FunctionComponent = () => {
-  const { config, updateConfig, parser } = useStore((state) => ({
+  const { config, updateConfig, resetConfig, parser } = useStore((state) => ({
     config: state.config,
     updateConfig: state.updateConfig,
+    resetConfig: state.resetConfig,
     parser: state.parser,
   }))
 
@@ -65,12 +67,12 @@ export const Options: FunctionComponent = () => {
     <form className="flex flex-col items-center gap-10">
       {navBar}
 
-      <div className="flex flex-wrap justify-center gap-10">
+      <div className="flex flex-wrap justify-center gap-6">
         <Tippy
           content="Does the first cycle begin with a charge or a discharge? If set to the opposite value from what is detected, the first will only be a half-cycle."
           placement="bottom"
         >
-          <label className="flex cursor-pointer select-none flex-col items-center justify-between font-medium text-gray-300">
+          <label className="text-sm flex cursor-pointer select-none flex-col items-center justify-between font-medium text-gray-300">
             Charge first?
             <input
               className="ml-2 mb-3 h-6 w-6 rounded-full text-yellow-500"
@@ -108,6 +110,23 @@ export const Options: FunctionComponent = () => {
           columns={parser.columnItems}
           onChange={handleChange}
         />
+
+        <Tippy
+          placement="bottom"
+          content="Reset all settings to their default values."
+        >
+          <label className="flex cursor-pointer select-none flex-col items-center justify-between font-medium text-gray-300 text-sm">
+            Reset
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                resetConfig()
+              }}
+            >
+              <ArrowPath size={24} />
+            </button>
+          </label>
+        </Tippy>
       </div>
 
       <ChunkerPreview />
