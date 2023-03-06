@@ -1,3 +1,4 @@
+import { round } from "lodash"
 import compact from "lodash-es/compact"
 import { buildHalf, condenseCycleHalf, HalfCycleLocation } from "./buildHalf"
 import { Context } from "./chunk"
@@ -44,9 +45,7 @@ export function buildCycle(
       ? dischargeCap / chargeCap
       : undefined
 
-  const chargeEfficiency = chargeRatio
-    ? Math.round(chargeRatio * 10000) / 100
-    : undefined
+  const chargeEfficiency = chargeRatio ? round(chargeRatio * 100, 2) : undefined
 
   const length = halves.reduce((a, h) => a + (h?.length || 0), 0)
 

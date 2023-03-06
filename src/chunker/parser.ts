@@ -57,10 +57,6 @@ export default class Parser {
       this?.columns?.map((label, index) => ({
         text: label,
         value: index,
-        labelMod: label,
-        multiply: 1,
-        abs: true,
-        round: 3,
       })) || []
 
     this.lines = this.parsedChart.data as RawLine[]
