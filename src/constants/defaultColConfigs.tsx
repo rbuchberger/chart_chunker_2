@@ -16,8 +16,8 @@ export const defaultColConfigs: Readonly<ColumnConfig[]> = [
   {
     index: 12,
     kind: "float",
-    roundTo: 3,
-    coefficient: 100,
+    roundTo: 2,
+    coefficient: 1000,
     name: "Specific Capacity (mAh/g)",
     abs: true,
   }, // 12 Specific capactity[Ah/g]
@@ -25,7 +25,7 @@ export const defaultColConfigs: Readonly<ColumnConfig[]> = [
   {
     index: 14,
     kind: "float",
-    roundTo: 3,
+    roundTo: 4,
     name: "Electrode Potential (V)",
     abs: true,
   }, // 14 Ucell1[V]
