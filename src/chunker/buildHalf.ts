@@ -49,7 +49,8 @@ export function buildHalf(
 
       switch (kind) {
         case "float": {
-          const float = round(parseFloat(val), roundTo)
+          const float = parseFloat(val)
+
           return processNumber(float)
         }
 
