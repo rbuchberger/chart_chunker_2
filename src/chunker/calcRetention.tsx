@@ -1,3 +1,4 @@
+import { round } from "lodash-es"
 import { PartialCycle } from "./buildCycle"
 
 export function calcRetention(cycles: PartialCycle[], cycle?: PartialCycle) {
@@ -10,5 +11,5 @@ export function calcRetention(cycles: PartialCycle[], cycle?: PartialCycle) {
 
   const ratio = cycle.discharge.maxCsp / startRetention
 
-  return Math.round(ratio * 10000) / 100
+  return round(ratio * 100, 2)
 }

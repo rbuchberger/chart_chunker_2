@@ -40,9 +40,9 @@ export function buildHalf(
       function processNumber(number: number) {
         let processed = number
 
+        if (abs) processed = Math.abs(processed)
         if (coefficient) processed *= coefficient
         if (roundTo !== undefined) processed = round(processed, roundTo)
-        if (abs) processed = Math.abs(processed)
 
         return processed
       }
