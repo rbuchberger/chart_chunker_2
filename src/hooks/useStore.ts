@@ -5,8 +5,9 @@ import { Chunker, ChunkerConfig } from "../chunker/chunk"
 import { immer } from "zustand/middleware/immer"
 import { FakeFile } from "./useChunker"
 import { ColumnConfig } from "../chunker/buildHalf"
+import { initialConfig, initialState } from "../constants/initialState"
 
-type State = Readonly<{
+export type State = Readonly<{
   file: File | FakeFile | null
   text: string | null
   parser: Parser | null
@@ -15,7 +16,7 @@ type State = Readonly<{
   flashMessages: FlashMessage[]
 }>
 
-type Actions = Readonly<{
+export type Actions = Readonly<{
   setFile: (file: State["file"]) => void
   setText: (text: State["text"]) => void
   setParser: (parser: State["parser"]) => void
@@ -35,26 +36,6 @@ type Actions = Readonly<{
 }>
 
 export type ColumnConfigUpdate = Partial<ColumnConfig> & { index: number }
-
-const initialConfig: ChunkerConfig = {
-  chargeFirst: true,
-  splitBasis: 8,
-  keptCols: [
-    { index: 12, name: "Specific Capacity (mAh/g)", coefficient: 1000 },
-    { index: 14, name: "Electrode Potential (V)" },
-  ],
-  spcCol: 12,
-  vCol: 14,
-}
-
-const initialState: State = {
-  file: null,
-  text: null,
-  config: initialConfig,
-  parser: null,
-  chunker: null,
-  flashMessages: [],
-}
 
 export const useStore = create(
   immer<State & Actions>((set, get) => ({
