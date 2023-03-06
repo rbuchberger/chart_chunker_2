@@ -11,6 +11,9 @@ export type ColumnConfig = {
   index: number
   name?: string
   coefficient?: number
+  kind?: "integer" | "float" | "string"
+  roundTo?: number
+  abs?: boolean
 }
 
 export type CycleHalf = ReturnType<typeof buildHalf>
@@ -27,10 +30,38 @@ export function buildHalf(
   const lines = parser.lines.slice(location.start, location.end)
   const length = lines.length
 
-  // Filter & present
+  // Process
   const processedLines = lines.map((line) => {
-    return config.keptCols.map(({ index, coefficient }) => {
-      return Math.abs(parseFloat(line[index] || "0") * (coefficient || 1))
+    return config.keptCols.map(({ index, coefficient, kind, roundTo, abs }) => {
+      const val = line[index]
+      if (val === undefined) return
+
+      // parse, multiply, round, abs, in that order.
+      function processNumber(number: number) {
+        let processed = number
+
+        if (coefficient) processed *= coefficient
+        if (roundTo !== undefined) processed = round(processed, roundTo)
+        if (abs) processed = Math.abs(processed)
+
+        return processed
+      }
+
+      switch (kind) {
+        case "float": {
+          const float = round(parseFloat(val), roundTo)
+          return processNumber(float)
+        }
+
+        case "integer": {
+          const int = parseInt(val)
+          return processNumber(int)
+        }
+
+        case "string":
+        default:
+          return val
+      }
     })
   })
 
@@ -51,8 +82,9 @@ export function buildHalf(
   const isCharge = avgSplitBasis > 0
   const isDischarge = avgSplitBasis < 0
 
-  const voltages = processedLines.map((l) => l[processedVCol])
-  const capacities = processedLines.map((l) => l[processedCspCol])
+  // TODO: make sure these type assertions are in fact true
+  const voltages = processedLines.map((l) => l[processedVCol]) as number[]
+  const capacities = processedLines.map((l) => l[processedCspCol]) as number[]
 
   // We're iterating twice each for voltage and spc; if perf becomes a problem
   // we can do it in one pass. Lodash doesn't offer a combo min/max function and
@@ -63,7 +95,9 @@ export function buildHalf(
   const minCsp = min(capacities)
 
   const csp =
-    maxCsp !== undefined && minCsp !== undefined ? maxCsp - minCsp : null
+    typeof maxCsp === "number" && typeof minCsp === "number"
+      ? maxCsp - minCsp
+      : null
 
   const prefix = isCharge ? "C" : "D"
   const headers = config.keptCols.map((config, index) => {

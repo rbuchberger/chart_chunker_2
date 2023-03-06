@@ -1,5 +1,6 @@
 import classNames from "classnames"
 import { ChangeEvent, FunctionComponent, useCallback, useState } from "react"
+import { defaultColConfigs } from "../constants/defaultColConfigs"
 import { useStore } from "../hooks/useStore"
 
 export const ColumnSettingsItem: FunctionComponent<{
@@ -12,15 +13,16 @@ export const ColumnSettingsItem: FunctionComponent<{
     upsertKeptColumn: state.upsertKeptColumn,
   }))
 
-  const [stashedConfig, stash] = useState(config)
+  const [stashedConfig, stash] = useState(config || defaultColConfigs[index])
   const checked = !!config
 
   const handleCheck = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      if (event.target.checked) {
-        upsertKeptColumn(stashedConfig || { index })
+      if (event.target.checked && stashedConfig) {
+        upsertKeptColumn(stashedConfig)
       } else {
-        stash(config)
+        if (config) stash(config)
+
         removeKeptColumn(index)
       }
     },
