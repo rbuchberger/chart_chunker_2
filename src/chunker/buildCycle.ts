@@ -40,7 +40,7 @@ export function buildCycle(
   const chargeCap = chargeComplete?.maxCsp
   const dischargeCap = dischargeComplete?.maxCsp
   const chargeRatio =
-    chargeCap !== undefined && dischargeCap !== undefined
+    typeof chargeCap === "number" && typeof dischargeCap === "number"
       ? dischargeCap / chargeCap
       : undefined
 

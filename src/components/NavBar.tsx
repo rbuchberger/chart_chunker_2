@@ -19,7 +19,7 @@ export const NavBar: FunctionComponent<{
   const enableNext = !!file
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files?.[0]) {
       setFile(e.target.files[0])
     } else {
       setFile(null)

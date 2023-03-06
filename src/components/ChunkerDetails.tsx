@@ -11,8 +11,9 @@ export const ChunkerDetails: FunctionComponent<{
 }> = ({ selectedCycle, setSelectedCycle }) => {
   const chunker = useStore((state) => state.chunker)
   const cycles = chunker?.cycles
+  const cycle = cycles?.[selectedCycle]
 
-  if (!cycles) return <LoadingSpinner />
+  if (!cycle) return <LoadingSpinner />
 
   return (
     <>
@@ -22,18 +23,18 @@ export const ChunkerDetails: FunctionComponent<{
         cycles={cycles}
       />
 
-      <CycleProfile cycle={cycles[selectedCycle]} />
+      <CycleProfile cycle={cycle} />
 
       <DataTable
         title="Analysis"
-        headers={cycles[selectedCycle].overview.headers}
-        lines={cycles[selectedCycle].overview.lines}
+        headers={cycle.overview.headers}
+        lines={cycle.overview.lines}
       />
 
       <DataTable
         title="Data"
-        headers={cycles[selectedCycle].processedLines[0]}
-        lines={cycles[selectedCycle].processedLines.slice(1)}
+        headers={cycle.processedLines[0] || []}
+        lines={cycle.processedLines.slice(1)}
         startCollapsed={true}
       />
     </>

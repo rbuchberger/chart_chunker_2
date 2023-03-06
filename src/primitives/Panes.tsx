@@ -5,7 +5,7 @@ export const Panes: FunctionComponent<{
   buttons: { name: string; content?: React.ReactNode }[]
   panes: Record<string, React.ReactNode>
 }> = ({ buttons, panes }) => {
-  const [pane, setPane] = useState(buttons[0].name)
+  const [pane, setPane] = useState(buttons[0]?.name)
   const handlePaneClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       const newPane = event.currentTarget.getAttribute("data-name")
@@ -20,6 +20,8 @@ export const Panes: FunctionComponent<{
       console.error(`Pane ${key} has no button`)
     }
   })
+
+  if (!pane) return <></>
 
   return (
     <>

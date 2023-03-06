@@ -9,7 +9,7 @@ export function buildCycles(locs: HalfCycleLocation[], context: Context) {
   const { checkedLocs, errors } = checkLocs(locs, chargeFirst)
 
   const cycles = chunk(checkedLocs, 2).map((pair, index) => {
-    return buildCycle(pair[0], pair[1], index + 1, context)
+    return buildCycle(pair[0] || null, pair[1] || null, index + 1, context)
   })
 
   return { cycles, errors }
