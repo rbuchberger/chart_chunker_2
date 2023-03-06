@@ -36,7 +36,7 @@ export const DataTable: FunctionComponent<{
       <div className="flex flex-row justify-between">
         <h3 className="text-xl">{title}</h3>
         <Tippy
-          content={`Copy this ${headers.length}x${lines.length} table to the clipboard in tab-separated CSV format`}
+          content={`Copy this ${lines[0]?.length}x${lines.length} table to the clipboard in tab-separated CSV format`}
         >
           <button onClick={handleCopy} className="btn btn--gray">
             <Clipboard size={18} />

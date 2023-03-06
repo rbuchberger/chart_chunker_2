@@ -6,14 +6,14 @@ export default class Concatenator {
   // an array of cycles (which contain such tables), and appends them
   // side-by-side.
   cycles: Concatenatable[]
-  table: (string | number)[][] = [[]]
+  table: (string | number | undefined)[][] = [[]]
 
   constructor(cycles: Concatenatable[]) {
     this.cycles = cycles
   }
 
   get columnCount() {
-    return this.cycles[0].headers.length
+    return this.cycles[0]?.headers.length || 0
   }
 
   get concatenated() {
@@ -28,13 +28,14 @@ export default class Concatenator {
   }
 
   get concatenatedWithHeaders() {
-    this.table = [[]]
+    const firstLine: (string | undefined)[] = []
+    this.table = [firstLine]
     this.cycles.forEach((cycle, cycleNo) => {
       cycle.processedLines.forEach((line, lineNo) => {
         this._appendToLine(cycleNo, line, lineNo + 1)
       })
 
-      this.table[0].push(...cycle.headers)
+      firstLine.push(...cycle.headers)
     })
 
     return this.table
@@ -42,19 +43,21 @@ export default class Concatenator {
 
   private _appendToLine(
     cycleNo: number,
-    line: (string | number)[],
+    line: (string | number | undefined)[],
     lineNo: number
   ) {
     // This cycle might be the longest one so far, so we may need to add a new
     // empty line:
+    const thisLine = this.table[lineNo] || []
+
     if (this.table.length < lineNo + 1) {
-      this.table.push([])
+      this.table.push(thisLine)
     }
 
     // Past cycles may not have been as long as this cycle. We need to insert
-    // empty values into this line until it's the correct length:
-    this.table[lineNo].length = this.columnCount * cycleNo
+    // empty values into this line until it's the correct length. We've checked
+    thisLine.length = this.columnCount * cycleNo
 
-    this.table[lineNo].push(...line)
+    thisLine.push(...line)
   }
 }
