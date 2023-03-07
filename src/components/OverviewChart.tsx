@@ -28,7 +28,7 @@ export const OverviewChart: FunctionComponent<{
         <Line
           type="monotone"
           dataKey="Retention (%)"
-          stroke="orange"
+          stroke="#facc15"
           dot={false}
         />
         <Line
@@ -47,12 +47,12 @@ export const OverviewChart: FunctionComponent<{
       </LineChart>
 
       <ul className="flex flex-col items-center gap-6 whitespace-nowrap font-mono text-xs">
-        <li className="flex items-center gap-2">
+        <li className="text-yellow-300 flex items-center gap-2">
           <div>
             Retention<sub>n</sub> = 100 ·
           </div>
           <div className="text-center">
-            <div className="mb-1 border-b border-b-gray-50 pb-1">
+            <div className="mb-1 border-b border-b-yellow-300 pb-1">
               Specific Capacity<sub>n</sub>
             </div>
             <div>
