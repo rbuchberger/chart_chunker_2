@@ -28,14 +28,13 @@ export type Actions = Readonly<{
 
   removeKeptColumn: (columnNumber: number) => void
   upsertKeptColumn: (config: Partial<ColumnConfig> & { index: number }) => void
+  addKeptColumn: (columnNumber: number) => void
 
   flash: (message: Omit<FlashMessage, "id">) => void
   clearFlash: (id: FlashMessage["id"]) => void
   reset: () => void
   resetConfig: () => void
 }>
-
-export type ColumnConfigUpdate = Partial<ColumnConfig> & { index: number }
 
 export const useStore = create(
   immer<State & Actions>((set, get) => ({
@@ -69,6 +68,11 @@ export const useStore = create(
       })
     },
 
+    addKeptColumn: (columnNumber: number) => {
+      const config = defaultColConfigs[columnNumber] || { index: columnNumber }
+      get().upsertKeptColumn(config)
+    },
+
     removeKeptColumn: (columnNumber: number) => {
       set((state) => {
         const index = state.config.keptCols.findIndex(
@@ -80,7 +84,7 @@ export const useStore = create(
       })
     },
 
-    upsertKeptColumn: (config: ColumnConfigUpdate) => {
+    upsertKeptColumn: (config: ColumnConfig) => {
       set((state) => {
         const location = state.config.keptCols.findIndex(
           (c) => c.index === config.index
@@ -89,7 +93,7 @@ export const useStore = create(
         const original = state.config.keptCols[location]
 
         if (original) {
-          state.config.keptCols[location] = { ...original, ...config }
+          state.config.keptCols[location] = { ...config }
         } else {
           state.config.keptCols.push(config)
           state.config.keptCols.sort((a, b) => a.index - b.index)

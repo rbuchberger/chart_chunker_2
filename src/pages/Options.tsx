@@ -7,9 +7,10 @@ import { NavBar } from "../components/NavBar"
 import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css"
 import { LoadingSpinner } from "../components/LoadingSpinner"
-import { ColumnSettingsItem } from "../components/ColumnSettingsItem"
 import { useLoading } from "../hooks/useLoading"
 import { ArrowPath } from "@styled-icons/heroicons-solid"
+import { ColumnToggle } from "../components/ColumnToggle"
+import { ColumnSettingsItem } from "../components/ColumnSettingsItem"
 
 export const Options: FunctionComponent = () => {
   const { config, updateConfig, resetConfig, parser } = useStore((state) => ({
@@ -60,6 +61,12 @@ export const Options: FunctionComponent = () => {
       )
   }
 
+  const unkeptCols = parser?.columns
+    .map((col, i) => {
+      return { rawName: col, index: i }
+    })
+    .filter((_c, i) => !config.keptCols.find((kc) => kc.index === i))
+
   // Switch case above will ensure this doesn't happen, but TS doesn't know that.
   if (!parser) return <></>
 
@@ -67,12 +74,12 @@ export const Options: FunctionComponent = () => {
     <form className="flex flex-col items-center gap-10">
       {navBar}
 
-      <div className="flex flex-wrap justify-center gap-6">
+      <div className="flex flex-col justify-center gap-6 md:flex-row">
         <Tippy
           content="Does the first cycle begin with a charge or a discharge? If set to the opposite value from what is detected, the first will only be a half-cycle."
           placement="bottom"
         >
-          <label className="text-sm flex cursor-pointer select-none flex-col items-center justify-between font-medium text-gray-300">
+          <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
             Charge first?
             <input
               className="ml-2 mb-3 h-6 w-6 rounded-full text-yellow-500"
@@ -115,8 +122,8 @@ export const Options: FunctionComponent = () => {
           placement="bottom"
           content="Reset all settings to their default values."
         >
-          <label className="flex cursor-pointer select-none flex-col items-center justify-between font-medium text-gray-300 text-sm">
-            Reset
+          <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
+            Reset to Defaults
             <button
               onClick={(e) => {
                 e.preventDefault()
@@ -137,28 +144,21 @@ export const Options: FunctionComponent = () => {
             <h2 className="text-2xl">How do you want your data?</h2>
           </Tippy>
         </div>
+        <ul className="flex flex-col gap-8">
+          {config.keptCols.map((_, index) => (
+            <ColumnSettingsItem key={index} index={index} />
+          ))}
+        </ul>
 
-        <ul className="flex flex-col gap-y-3">
-          <li className="grid grid-cols-5 gap-4">
-            <div className="col-span-2 flex">
-              <Tippy content="Columns not selected will be ignored.">
-                <h3 className="">Included?</h3>
-              </Tippy>
-            </div>
-            <div className="col-span-2 flex">
-              <Tippy content="Set a new name for column headers.">
-                <h3 className="">Renamed?</h3>
-              </Tippy>
-            </div>
+        <hr className="border-gray-500" />
 
-            <div className="flex">
-              <Tippy content="Multiply all values by some coefficient.">
-                <h3 className="">Multiplied?</h3>
-              </Tippy>
-            </div>
-          </li>
-          {parser.columns.map((col, index) => (
-            <ColumnSettingsItem key={index} index={index} col={col} />
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {unkeptCols?.map((col) => (
+            <ColumnToggle
+              key={col.index}
+              index={col.index}
+              name={col.rawName}
+            />
           ))}
         </ul>
       </section>
