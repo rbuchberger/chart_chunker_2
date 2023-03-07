@@ -1,4 +1,5 @@
-import { test, expect } from "vitest"
+import { expect, test } from "vitest"
+
 import { sample1 } from "../../test_data/sample1_trunc"
 import Parser from "./parser"
 

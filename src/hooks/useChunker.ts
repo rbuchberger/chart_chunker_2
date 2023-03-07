@@ -1,10 +1,10 @@
 import { useEffect } from "react"
-import { ChunkWorkerResponse } from "../workers/chunker"
-import { useStore } from "./useStore"
 
-import ParseWorker from "../workers/parser?worker"
-import ReadWorker from "../workers/filereader?worker"
+import { ChunkWorkerResponse } from "../workers/chunker"
 import ChunkWorker from "../workers/chunker?worker"
+import ReadWorker from "../workers/filereader?worker"
+import ParseWorker from "../workers/parser?worker"
+import { useStore } from "./useStore"
 
 export type FakeFile = { name: string; fake: true }
 

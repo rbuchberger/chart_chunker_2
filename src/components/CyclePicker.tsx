@@ -1,4 +1,3 @@
-import { FunctionComponent, useCallback } from "react"
 import {
   ChevronDoubleLeft,
   ChevronDoubleRight,
@@ -7,6 +6,8 @@ import {
   MinusSmall,
   PlusSmall,
 } from "@styled-icons/heroicons-solid"
+import { FunctionComponent, useCallback } from "react"
+
 import { PartialCycle } from "../chunker/buildCycle"
 
 export const CyclePicker: FunctionComponent<{

@@ -1,16 +1,18 @@
+import "tippy.js/dist/tippy.css"
+
+import { ArrowPath } from "@styled-icons/heroicons-solid"
+import Tippy from "@tippyjs/react"
 import { ChangeEvent, FunctionComponent, useCallback } from "react"
 import { Link } from "react-router-dom"
+
+import { ChunkerPreview } from "../components/ChunkerPreview"
+import { ColumnSettingsItem } from "../components/ColumnSettingsItem"
+import { ColumnToggle } from "../components/ColumnToggle"
+import { LoadingSpinner } from "../components/LoadingSpinner"
+import { NavBar } from "../components/NavBar"
+import { useLoading } from "../hooks/useLoading"
 import { useStore } from "../hooks/useStore"
 import { ColumnSelectBox } from "../primitives/ColumnSelectBox"
-import { ChunkerPreview } from "../components/ChunkerPreview"
-import { NavBar } from "../components/NavBar"
-import Tippy from "@tippyjs/react"
-import "tippy.js/dist/tippy.css"
-import { LoadingSpinner } from "../components/LoadingSpinner"
-import { useLoading } from "../hooks/useLoading"
-import { ArrowPath } from "@styled-icons/heroicons-solid"
-import { ColumnToggle } from "../components/ColumnToggle"
-import { ColumnSettingsItem } from "../components/ColumnSettingsItem"
 
 export const Options: FunctionComponent = () => {
   const { config, updateConfig, resetConfig, parser } = useStore((state) => ({
@@ -39,9 +41,12 @@ export const Options: FunctionComponent = () => {
     />
   )
 
-  const handleChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
-    updateConfig({ [event.target.name]: event.target.value })
-  }, [])
+  const handleChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      updateConfig({ [event.target.name]: event.target.value })
+    },
+    [updateConfig]
+  )
 
   switch (useLoading()) {
     case "none":

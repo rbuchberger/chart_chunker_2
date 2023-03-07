@@ -1,6 +1,7 @@
+import "tippy.js/dist/tippy.css" // optional
+
 import Tippy from "@tippyjs/react"
 import { ChangeEventHandler, FunctionComponent } from "react"
-import "tippy.js/dist/tippy.css" // optional
 
 export const ColumnSelectBox: FunctionComponent<{
   label: string

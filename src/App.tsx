@@ -1,11 +1,12 @@
-import { Header } from "./components/Header"
-import { router } from "./router"
-import { RouterProvider } from "react-router-dom"
-import { Card } from "./primitives/Card"
-import { useChunker } from "./hooks/useChunker"
-import { FlashMessages } from "./components/FlashMessages"
 import * as Sentry from "@sentry/react"
 import { BrowserTracing } from "@sentry/tracing"
+import { RouterProvider } from "react-router-dom"
+
+import { FlashMessages } from "./components/FlashMessages"
+import { Header } from "./components/Header"
+import { useChunker } from "./hooks/useChunker"
+import { Card } from "./primitives/Card"
+import { router } from "./router"
 
 if (import.meta.env.PROD) {
   Sentry.init({

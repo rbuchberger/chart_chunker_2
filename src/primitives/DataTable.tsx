@@ -1,14 +1,16 @@
+import "tippy.js/dist/tippy.css" // optional
+
 import {
   ChevronDown,
   ChevronRight,
   Clipboard,
 } from "@styled-icons/heroicons-solid"
 import Tippy from "@tippyjs/react"
-import "tippy.js/dist/tippy.css" // optional
 import classNames from "classnames"
 import { FunctionComponent, ReactNode, useState } from "react"
-import { useTableCopy } from "../hooks/useTableCopy"
+
 import { useStore } from "../hooks/useStore"
+import { useTableCopy } from "../hooks/useTableCopy"
 
 export const DataTable: FunctionComponent<{
   headers: ReactNode[]

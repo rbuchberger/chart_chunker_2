@@ -1,7 +1,9 @@
-import Tippy from "@tippyjs/react"
 import "tippy.js/dist/tippy.css"
+
+import Tippy from "@tippyjs/react"
 import classNames from "classnames"
 import { FunctionComponent } from "react"
+
 import { useStore } from "../hooks/useStore"
 
 export const NavBar: FunctionComponent<{

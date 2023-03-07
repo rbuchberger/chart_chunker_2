@@ -5,6 +5,7 @@ import {
   XMark,
 } from "@styled-icons/heroicons-solid"
 import { FunctionComponent, useMemo } from "react"
+
 import { useStore } from "../hooks/useStore"
 
 export type FlashMessage = {
