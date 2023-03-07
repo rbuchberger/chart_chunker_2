@@ -1,4 +1,5 @@
 import { FunctionComponent, useCallback, useState } from "react"
+
 import { PaneButton } from "./PaneButton"
 
 export const Panes: FunctionComponent<{
@@ -11,7 +12,7 @@ export const Panes: FunctionComponent<{
       const newPane = event.currentTarget.getAttribute("data-name")
       if (newPane && Object.keys(panes).includes(newPane)) setPane(newPane)
     },
-    [setPane]
+    [panes]
   )
 
   // Can probably do this with typescript but I'm not smart enough.

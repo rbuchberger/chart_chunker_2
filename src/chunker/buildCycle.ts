@@ -1,5 +1,6 @@
 import { round } from "lodash"
 import compact from "lodash-es/compact"
+
 import { buildHalf, condenseCycleHalf, HalfCycleLocation } from "./buildHalf"
 import { Context } from "./chunk"
 import Concatenator from "./concatenator"

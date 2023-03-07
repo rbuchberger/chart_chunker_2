@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react"
-import { LineChart, Line, YAxis, XAxis, Legend, Tooltip } from "recharts"
+import { Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
+
 import { ChunkerOverview } from "../chunker/chunk"
 
 export const OverviewChart: FunctionComponent<{
@@ -51,7 +52,7 @@ export const OverviewChart: FunctionComponent<{
             Retention<sub>n</sub> = 100 ·
           </div>
           <div className="text-center">
-            <div className="mb-1 pb-1 border-b border-b-gray-50">
+            <div className="mb-1 border-b border-b-gray-50 pb-1">
               Specific Capacity<sub>n</sub>
             </div>
             <div>

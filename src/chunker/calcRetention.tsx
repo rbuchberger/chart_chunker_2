@@ -1,4 +1,5 @@
 import { round } from "lodash-es"
+
 import { PartialCycle } from "./buildCycle"
 
 export function calcRetention(cycles: PartialCycle[], cycle?: PartialCycle) {

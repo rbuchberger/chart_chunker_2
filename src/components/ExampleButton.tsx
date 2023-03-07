@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react"
+
 import { FakeFile } from "../hooks/useChunker"
 import { useStore } from "../hooks/useStore"
 
@@ -39,7 +40,7 @@ export const ExampleButton: FunctionComponent = () => {
         flash(err.message || "Could not load example data, sorry")
         setLoading("none")
       })
-  }, [])
+  }, [flash, setFile, setText])
 
   const content = useMemo(() => {
     switch (loading) {

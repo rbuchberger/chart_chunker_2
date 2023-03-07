@@ -1,11 +1,13 @@
 import { create } from "zustand"
+import { immer } from "zustand/middleware/immer"
+
+import { ColumnConfig } from "../chunker/buildHalf"
+import { Chunker, ChunkerConfig } from "../chunker/chunk"
 import Parser from "../chunker/parser"
 import { FlashMessage } from "../components/FlashMessage"
-import { Chunker, ChunkerConfig } from "../chunker/chunk"
-import { immer } from "zustand/middleware/immer"
-import { FakeFile } from "./useChunker"
-import { ColumnConfig } from "../chunker/buildHalf"
+import { defaultColConfigs } from "../constants/defaultColConfigs"
 import { initialConfig, initialState } from "../constants/initialState"
+import { FakeFile } from "./useChunker"
 
 export type State = Readonly<{
   file: File | FakeFile | null

@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
+
 import { PartialCycle } from "../chunker/buildCycle"
 import { useStore } from "../hooks/useStore"
 
@@ -23,8 +24,6 @@ export const CycleProfile: FunctionComponent<{
   })
   const { keptCols, spcCol, vCol, chargeFirst } = config
 
-  if (!chunker) return <></>
-
   const minMaxes = useMemo(() => {
     const vals = chunker?.cycles.map((cycle) => {
       return {
@@ -35,13 +34,21 @@ export const CycleProfile: FunctionComponent<{
       }
     })
 
+    if (!vals)
+      return {
+        maxV: undefined,
+        minV: undefined,
+        maxCsp: undefined,
+        minCsp: undefined,
+      }
+
     return {
       maxV: ceil(max(vals.map((val) => val.maxV)) || 0, 1),
       minV: floor(min(vals.map((val) => val.minV)) || 0, 1),
       maxCsp: ceil(max(vals.map((val) => val.maxCsp)) || 0, 1),
       minCsp: floor(min(vals.map((val) => val.minCsp)) || 0, 1),
     }
-  }, [])
+  }, [chunker?.cycles])
 
   const colNums = useMemo(() => {
     const offset = keptCols.length
@@ -56,7 +63,7 @@ export const CycleProfile: FunctionComponent<{
       dischargeV:
         dischargeOffset + keptCols.findIndex(({ index }) => index == vCol),
     }
-  }, [config])
+  }, [chargeFirst, keptCols, spcCol, vCol])
 
   const [chargeData, dischargeData] = useMemo(() => {
     type Point = { x: number; y: number }
@@ -85,6 +92,8 @@ export const CycleProfile: FunctionComponent<{
     })
     return [chargeData, dischargeData]
   }, [cycle, colNums])
+
+  if (!chunker) return <></>
 
   return (
     <div className="flex flex-row justify-center">

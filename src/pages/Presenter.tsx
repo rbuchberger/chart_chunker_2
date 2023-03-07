@@ -1,22 +1,24 @@
-import { FunctionComponent, useState } from "react"
-import { Link } from "react-router-dom"
-import { useStore } from "../hooks/useStore"
-import { OverviewChart } from "../components/OverviewChart"
+import "tippy.js/dist/tippy.css"
+
 import {
+  Clipboard,
   MagnifyingGlassMinus,
   MagnifyingGlassPlus,
 } from "@styled-icons/heroicons-solid"
-import { Panes } from "../primitives/Panes"
-import { ChunkerDetails } from "../components/ChunkerDetails"
-import { NavBar } from "../components/NavBar"
-import { Clipboard } from "@styled-icons/heroicons-solid"
-import { DataTable } from "../primitives/DataTable"
-import Concatenator from "../chunker/concatenator"
-import Papa from "papaparse"
-import { useLoading } from "../hooks/useLoading"
 import Tippy from "@tippyjs/react"
-import "tippy.js/dist/tippy.css"
+import Papa from "papaparse"
+import { FunctionComponent, useState } from "react"
+import { Link } from "react-router-dom"
+
+import Concatenator from "../chunker/concatenator"
+import { ChunkerDetails } from "../components/ChunkerDetails"
 import { LoadingSpinner } from "../components/LoadingSpinner"
+import { NavBar } from "../components/NavBar"
+import { OverviewChart } from "../components/OverviewChart"
+import { useLoading } from "../hooks/useLoading"
+import { useStore } from "../hooks/useStore"
+import { DataTable } from "../primitives/DataTable"
+import { Panes } from "../primitives/Panes"
 
 export const Presenter: FunctionComponent = () => {
   const { chunker, flash } = useStore((state) => ({
