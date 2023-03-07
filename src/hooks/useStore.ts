@@ -75,14 +75,11 @@ export const useStore = create(
       get().upsertKeptColumn(config)
     },
 
-    removeKeptColumn: (columnNumber: number) => {
+    // Index is the index of the kept column in the keptCols array, not of the
+    // raw columns
+    removeKeptColumn: (keptColumnIndex: number) => {
       set((state) => {
-        const index = state.config.keptCols.findIndex(
-          (c) => c.index === columnNumber
-        )
-
-        if (index !== -1) state.config.keptCols.splice(index, 1)
-        else console.error("Tried to remove non-existent kept column")
+        state.config.keptCols.splice(keptColumnIndex, 1)
       })
     },
 
