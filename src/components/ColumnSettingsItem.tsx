@@ -7,11 +7,11 @@ import { FunctionComponent, useCallback } from "react"
 import { useStore } from "../hooks/useStore"
 
 export const ColumnSettingsItem: FunctionComponent<{
-  index: number
-}> = ({ index }) => {
+  keptColIndex: number
+}> = ({ keptColIndex: keptColIndex }) => {
   const { config, rawNames, removeKeptColumn, upsertKeptColumn } = useStore(
     (state) => ({
-      config: state.config.keptCols?.[index],
+      config: state.config.keptCols?.[keptColIndex],
       rawNames: state?.parser?.columns,
       removeKeptColumn: state.removeKeptColumn,
       upsertKeptColumn: state.upsertKeptColumn,
@@ -21,10 +21,9 @@ export const ColumnSettingsItem: FunctionComponent<{
   const handleRemove = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault()
-
-      removeKeptColumn(index)
+      removeKeptColumn(keptColIndex)
     },
-    [index, removeKeptColumn]
+    [keptColIndex, removeKeptColumn]
   )
 
   const handleChange = useCallback(

@@ -151,7 +151,7 @@ export const Options: FunctionComponent = () => {
         </div>
         <ul className="flex flex-col gap-8">
           {config.keptCols.map((_, index) => (
-            <ColumnSettingsItem key={index} index={index} />
+            <ColumnSettingsItem key={index} keptColIndex={index} />
           ))}
         </ul>
 
