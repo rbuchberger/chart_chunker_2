@@ -13,6 +13,7 @@
     "lint-fix": "eslint ./src --fix"
   },
   "dependencies": {
+    "@sentry/integrations": "^7.42.0",
     "@sentry/react": "^7.38.0",
     "@sentry/tracing": "^7.38.0",
     "@styled-icons/heroicons-solid": "^10.47.0",
