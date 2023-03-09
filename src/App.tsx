@@ -21,7 +21,6 @@ if (import.meta.env.PROD) {
 }
 
 console.log("import.meta.env.PROD", import.meta.env.PROD)
-console.log("import.meta.env", import.meta.env)
 
 function App() {
   useChunker()
