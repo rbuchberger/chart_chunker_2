@@ -1,3 +1,4 @@
+import { CaptureConsole } from "@sentry/integrations"
 import * as Sentry from "@sentry/react"
 import { BrowserTracing } from "@sentry/tracing"
 import { RouterProvider } from "react-router-dom"
@@ -11,7 +12,7 @@ import { router } from "./router"
 if (import.meta.env.PROD) {
   Sentry.init({
     dsn: "https://32d706941cf04fee8bba0d3c38b07839@o4504719318450176.ingest.sentry.io/4504719320285184",
-    integrations: [new BrowserTracing()],
+    integrations: [new BrowserTracing(), new CaptureConsole()],
 
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
@@ -19,8 +20,6 @@ if (import.meta.env.PROD) {
     tracesSampleRate: 1.0,
   })
 }
-
-console.log("import.meta.env.PROD", import.meta.env.PROD)
 
 function App() {
   useChunker()
