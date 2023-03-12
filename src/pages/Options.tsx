@@ -79,7 +79,7 @@ export const Options: FunctionComponent = () => {
     <form className="flex flex-col items-center gap-10">
       {navBar}
 
-      <div className="flex flex-col justify-center gap-6 md:flex-row">
+      <div className="flex flex-col flex-wrap justify-center gap-6 md:flex-row">
         <Tippy
           content="Does the first cycle begin with a charge or a discharge? If set to the opposite value from what is detected, the first will only be a half-cycle."
           placement="bottom"
