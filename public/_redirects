@@ -1,0 +1,4 @@
+# Configuring netlify redirects
+# https://docs.netlify.com/routing/redirects/redirect-options/
+# It's a SPA, everything lives at root.
+/*     /   200
