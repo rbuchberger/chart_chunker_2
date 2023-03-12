@@ -102,6 +102,7 @@ export const CycleProfile: FunctionComponent<{
           dataKey="x"
           type="number"
           name="Csp"
+          stroke="#DDD"
           unit="mAh/g"
           domain={[minMaxes.minCsp || "dataMin", minMaxes.maxCsp || "dataMax"]}
         />
@@ -109,16 +110,14 @@ export const CycleProfile: FunctionComponent<{
           dataKey="y"
           type="number"
           name="Potential"
+          stroke="#DDD"
           unit="V"
           domain={[minMaxes.minV || "dataMin", minMaxes.maxV || "dataMax"]}
         />
         <Legend />
         <Tooltip
           cursor={{ strokeDasharray: "3 3" }}
-          contentStyle={{
-            borderRadius: "5px",
-            backgroundColor: "rgba(20, 20, 20, 0.9)",
-          }}
+          contentStyle={{ borderRadius: "5px", backgroundColor: "#DDD", color: "#333" }}
         />
         <Scatter
           name="Charge"
