@@ -1,5 +1,6 @@
-import { ceil, floor, max, min } from "lodash-es"
-import { FunctionComponent, useMemo } from "react"
+import Tippy from "@tippyjs/react"
+import { ceil, floor, max, min, zip } from "lodash-es"
+import { FunctionComponent, useMemo, useState } from "react"
 import {
   Dot,
   Legend,
@@ -23,6 +24,8 @@ export const CycleProfile: FunctionComponent<{
     }
   })
   const { keptCols, spcCol, vCol, chargeFirst } = config
+
+  const [flip, setFlip] = useState(false)
 
   const minMaxes = useMemo(() => {
     const vals = chunker?.cycles.map((cycle) => {
@@ -67,6 +70,11 @@ export const CycleProfile: FunctionComponent<{
 
   const [chargeData, dischargeData] = useMemo(() => {
     type Point = { x: number; y: number }
+
+    // It's easier to keep discharge data separated in case we need to flip it.
+    const dischargeX: number[] = []
+    const dischargeY: number[] = []
+
     const chargeData: Point[] = []
     const dischargeData: Point[] = []
     cycle.processedLines.slice(1).forEach((line) => {
@@ -84,19 +92,47 @@ export const CycleProfile: FunctionComponent<{
         line[colNums.dischargeCsp] !== undefined &&
         line[colNums.dischargeV] !== undefined
       ) {
-        dischargeData.push({
-          x: line[colNums.dischargeCsp] as number,
-          y: line[colNums.dischargeV] as number,
-        })
+        dischargeX.push(line[colNums.dischargeCsp] as number)
+        dischargeY.push(line[colNums.dischargeV] as number)
       }
     })
+    let offset = 0
+    if (flip) {
+      offset =
+        (chargeData[chargeData.length - 1]?.x || 0) -
+        (dischargeX?.[dischargeX?.length - 1] || 0)
+
+      dischargeY.reverse()
+    }
+
+    zip(dischargeX, dischargeY).forEach(([x, y]) => {
+      dischargeData.push({ x: (x as number) + offset, y: y as number })
+    })
     return [chargeData, dischargeData]
-  }, [cycle, colNums])
+  }, [
+    cycle.processedLines,
+    flip,
+    colNums.chargeCsp,
+    colNums.chargeV,
+    colNums.dischargeCsp,
+    colNums.dischargeV,
+  ])
 
   if (!chunker) return <></>
 
   return (
-    <div className="flex flex-row justify-center">
+    <div className="flex flex-col items-center justify-center gap-5 md:flex-row">
+      <Tippy content="Reverse discharge x values, and offset so the last point of charge & discharge match">
+        <label className="flex cursor-pointer flex-row items-center gap-2">
+          <div>Flip discharge?</div>
+          <input
+            className="rounded-full text-yellow-400 focus:ring-yellow-400"
+            type="checkbox"
+            checked={flip}
+            onChange={(e) => setFlip(e.target.checked)}
+          />
+        </label>
+      </Tippy>
       <ScatterChart width={500} height={300} className="">
         <XAxis
           dataKey="x"
@@ -117,7 +153,11 @@ export const CycleProfile: FunctionComponent<{
         <Legend />
         <Tooltip
           cursor={{ strokeDasharray: "3 3" }}
-          contentStyle={{ borderRadius: "5px", backgroundColor: "#DDD", color: "#333" }}
+          contentStyle={{
+            borderRadius: "5px",
+            backgroundColor: "#DDD",
+            color: "#333",
+          }}
         />
         <Scatter
           name="Charge"
