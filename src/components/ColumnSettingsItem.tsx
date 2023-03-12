@@ -160,12 +160,12 @@ export const ColumnSettingsItem: FunctionComponent<{
         >
           <div>
             <label className="grid grid-cols-5 items-center gap-2 whitespace-nowrap rounded-md">
-              <div className="col-span-3 cursor-pointer text-right sm:col-span-2">
+              <div className="col-span-4 cursor-pointer text-right md:col-span-3 lg:col-span-2">
                 Absolute Value?
               </div>
               <input
                 type="checkbox"
-                className="col-span-2 cursor-pointer rounded-full focus:ring-yellow-500 enabled:text-yellow-500 disabled:text-gray-400 sm:col-span-3"
+                className="md:col-span-2 cursor-pointer rounded-full focus:ring-yellow-500 enabled:text-yellow-500 disabled:text-gray-400 sm:col-span-3"
                 name="abs"
                 onChange={handleChange}
                 checked={!!config?.abs}
