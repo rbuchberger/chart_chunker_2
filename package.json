@@ -29,9 +29,11 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
     "recharts": "^2.4.3",
+    "url": "^0.11.0",
     "zustand": "^4.3.3"
   },
   "devDependencies": {
+    "@sentry/vite-plugin": "^0.4.0",
     "@types/lodash-es": "^4.17.6",
     "@types/papaparse": "^5.3.7",
     "@types/react": "^18.0.27",
