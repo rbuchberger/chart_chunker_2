@@ -24,10 +24,10 @@ export function buildHalf(
   cycleNumber: number,
   context: Context
 ) {
-  if (!location) return null
-
   // Setup
   const { config, parser } = context
+
+  if (!location || config.splitBasis === undefined) return null
   const lines = parser.lines.slice(location.start, location.end)
   const length = lines.length
 
@@ -77,7 +77,8 @@ export function buildHalf(
 
   // Basic analysis
   const splitBasisSum = lines.reduce(
-    (a, l) => a + parseFloat(l[config.splitBasis] || "0"),
+    // Typescript thinks splitbasis can be undefined, but we've already checked
+    (a, l) => a + parseFloat(l[config.splitBasis || 0] || "0"),
     0
   )
   const avgSplitBasis = splitBasisSum / lines.length

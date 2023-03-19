@@ -7,10 +7,10 @@ import Parser from "./parser"
 
 export type ChunkerConfig = {
   chargeFirst: boolean
-  splitBasis: number
+  splitBasis?: number
   keptCols: ColumnConfig[]
-  spcCol: number
-  vCol: number
+  spcCol?: number
+  vCol?: number
 }
 
 export type Context = { config: ChunkerConfig; parser: Parser }
@@ -25,6 +25,8 @@ export type Chunker = ReturnType<typeof chunk>
 
 export function chunk(context: Context) {
   const { config, parser } = context
+
+  if (!config.splitBasis) return null
 
   const cspHeader =
     config.keptCols.find((c) => c.index === config.spcCol)?.name ||
