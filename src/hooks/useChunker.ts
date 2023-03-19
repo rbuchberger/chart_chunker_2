@@ -1,3 +1,4 @@
+import { yieldOrContinue } from "main-thread-scheduling"
 import { useEffect } from "react"
 
 import { ChunkWorkerResponse } from "../workers/chunker"
@@ -56,6 +57,7 @@ export const useChunker = () => {
 
     setText(e.data.text)
   }
+
   parseWorker.onmessage = (e) => {
     if (e.data.result === "error") {
       flash({
@@ -67,7 +69,7 @@ export const useChunker = () => {
       reset()
     }
 
-    return setParser(e.data.parser)
+    setParser(e.data.parser)
   }
 
   chunkWorker.onmessage = (e: MessageEvent<ChunkWorkerResponse>) => {
@@ -86,21 +88,42 @@ export const useChunker = () => {
 
   // Parse file into text when uploaded
   useEffect(() => {
-    if (file && !(file as FakeFile).fake) readWorker.postMessage(file)
+    async function postFile() {
+      await yieldOrContinue("background")
+
+      readWorker.postMessage(file)
+    }
+
+    if (file && !(file as FakeFile).fake) postFile()
   }, [file])
 
   // Hand text to parser when text finishes
   useEffect(() => {
-    if (text) parseWorker.postMessage(text)
+    async function postText() {
+      await yieldOrContinue("background")
+      parseWorker.postMessage(text)
+    }
+
+    if (text) postText()
   }, [text])
 
   // Pass config to chunker
   useEffect(() => {
-    chunkWorker.postMessage({ config })
+    async function postConfig() {
+      await yieldOrContinue("background")
+
+      chunkWorker.postMessage({ config })
+    }
+
+    postConfig()
   }, [config])
 
   // Pass parser to chunker
   useEffect(() => {
-    if (parser) chunkWorker.postMessage({ parser })
+    async function postParser() {
+      await yieldOrContinue("background")
+      chunkWorker.postMessage({ parser })
+    }
+    if (parser) postParser()
   }, [parser])
 }
