@@ -1,9 +1,12 @@
 import { Minus } from "@styled-icons/heroicons-solid"
 import Tippy from "@tippyjs/react"
 import classNames from "classnames"
+import { Field, Form, Formik, useFormikContext } from "formik"
 import { round } from "lodash-es"
-import { FunctionComponent, useCallback } from "react"
+import { yieldOrContinue } from "main-thread-scheduling"
+import { FunctionComponent, useCallback, useEffect } from "react"
 
+import { ColumnConfig } from "../chunker/buildHalf"
 import { useStore } from "../hooks/useStore"
 
 export const ColumnSettingsItem: FunctionComponent<{
@@ -26,33 +29,55 @@ export const ColumnSettingsItem: FunctionComponent<{
     [keptColIndex, removeKeptColumn]
   )
 
-  const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      if (config?.index === undefined) return
-
-      let newVal
-      if (event.target.type === "checkbox") {
-        newVal = (event as React.ChangeEvent<HTMLInputElement>).target.checked
-      } else if (event.target.value === "") {
-        newVal = undefined
-      } else {
-        newVal = event.target.value
-      }
-
-      upsertKeptColumn({
-        ...config,
-        [event.target.name]: newVal,
-      })
-    },
-    [config, upsertKeptColumn]
-  )
-
   if (!config || !rawNames) return null
 
   const rawName = rawNames[config.index]
 
   return (
     <li className="rounded-md bg-gray-700 font-mono">
+      <Formik
+        initialValues={config}
+        onSubmit={(newval) => {
+          upsertKeptColumn(newval)
+        }}
+      >
+        <FormContent
+          handleRemove={handleRemove}
+          rawName={rawName}
+          config={config}
+        />
+      </Formik>
+    </li>
+  )
+}
+
+const FormContent: FunctionComponent<{
+  handleRemove: (event: React.MouseEvent<HTMLButtonElement>) => void
+  rawName?: string
+  config: ColumnConfig
+}> = ({ handleRemove, rawName, config }) => {
+  const provided = useFormikContext<ColumnConfig>()
+
+  // Without this useEffect hook, sometimes the form state & store state can get
+  // out of sync when modified from outside this form (such as when adding a
+  // column).
+  useEffect(() => {
+    // provided changes a lot; without this check the form is reset
+    // continuously.
+    if (provided.initialValues === config) return
+
+    provided.resetForm({ values: config })
+  }, [config, provided])
+
+  return (
+    <Form
+      onChange={async () => {
+        // Keeps text input smooth
+        await yieldOrContinue("background")
+
+        provided.submitForm()
+      }}
+    >
       <div className="flex items-center gap-1 p-2">
         <Tippy content="Remove this column from output data">
           <button
@@ -77,11 +102,9 @@ export const ColumnSettingsItem: FunctionComponent<{
             <label className="col-span-2 text-right" htmlFor="name">
               Rename to:
             </label>
-            <input
+            <Field
               type="text"
               name="name"
-              value={config.name}
-              onChange={(e) => e}
               className="col-span-3 rounded-md border border-gray-50 bg-gray-600 font-mono text-sm"
             />
           </div>
@@ -95,9 +118,8 @@ export const ColumnSettingsItem: FunctionComponent<{
             <label htmlFor="name" className="col-span-2 text-right">
               Data Type:
             </label>
-            <select
-              value={config.kind}
-              onChange={handleChange}
+            <Field
+              as="select"
               name="kind"
               className="col-span-3 rounded-md border border-gray-50 bg-gray-600 font-mono text-sm"
             >
@@ -106,7 +128,7 @@ export const ColumnSettingsItem: FunctionComponent<{
               </option>
               <option value="integer">Integer (Number without decimal)</option>
               <option value="float">Float (Number with decimal)</option>
-            </select>
+            </Field>
           </div>
         </Tippy>
 
@@ -119,12 +141,10 @@ export const ColumnSettingsItem: FunctionComponent<{
             <label htmlFor="name" className="col-span-2 text-right">
               Multiply by:
             </label>
-            <input
+            <Field
               disabled={config.kind === "string"}
               type="number"
               name="coefficient"
-              value={config?.kind !== "string" ? config?.coefficient || "" : ""}
-              onChange={handleChange}
               className={classNames(
                 "col-span-3 rounded-md border border-gray-50 bg-gray-600 font-mono text-sm",
                 "disabled:opacity-50"
@@ -142,12 +162,10 @@ export const ColumnSettingsItem: FunctionComponent<{
             <label htmlFor="name" className="col-span-2 text-right">
               Round To:
             </label>
-            <input
+            <Field
               disabled={config?.kind !== "float"}
               type="number"
               name="roundTo"
-              value={config?.kind === "float" ? config?.roundTo || "" : ""}
-              onChange={handleChange}
               className="rounded-md border border-gray-50 bg-gray-600 font-mono text-sm disabled:opacity-50"
             />
             <div className="col-span-2">decimal places</div>
@@ -157,24 +175,23 @@ export const ColumnSettingsItem: FunctionComponent<{
         <Tippy
           hideOnClick={false}
           content={`-123 -> ${config?.abs ? 123 : -123}`}
+          disabled={config?.kind === "string"}
         >
           <div>
             <label className="grid grid-cols-5 items-center gap-2 whitespace-nowrap rounded-md">
-              <div className="col-span-4 cursor-pointer text-right md:col-span-3 lg:col-span-2">
+              <div className="col-span-4 text-right enabled:cursor-pointer md:col-span-3 lg:col-span-2">
                 Absolute Value?
               </div>
-              <input
+              <Field
                 type="checkbox"
-                className="md:col-span-2 cursor-pointer rounded-full focus:ring-yellow-500 enabled:text-yellow-500 disabled:text-gray-400 sm:col-span-3"
+                className="rounded-full focus:ring-yellow-500 enabled:cursor-pointer enabled:text-yellow-500 disabled:text-gray-400 sm:col-span-3 md:col-span-2"
                 name="abs"
-                onChange={handleChange}
-                checked={!!config?.abs}
                 disabled={config?.kind === "string"}
               />
             </label>
           </div>
         </Tippy>
       </div>
-    </li>
+    </Form>
   )
 }
