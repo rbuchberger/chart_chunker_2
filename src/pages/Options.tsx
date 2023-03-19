@@ -124,8 +124,8 @@ export const Options: FunctionComponent = () => {
                   <button
                     onClick={(e) => {
                       e.preventDefault()
-                      provided.resetForm()
                       resetConfig()
+                      provided.resetForm()
                     }}
                   >
                     <ArrowPath size={24} />
