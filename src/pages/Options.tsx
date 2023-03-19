@@ -2,7 +2,8 @@ import "tippy.js/dist/tippy.css"
 
 import { ArrowPath } from "@styled-icons/heroicons-solid"
 import Tippy from "@tippyjs/react"
-import { ChangeEvent, FunctionComponent, useCallback } from "react"
+import { Field, Form, Formik } from "formik"
+import { FunctionComponent } from "react"
 import { Link } from "react-router-dom"
 
 import { ChunkerPreview } from "../components/ChunkerPreview"
@@ -41,13 +42,6 @@ export const Options: FunctionComponent = () => {
     />
   )
 
-  const handleChange = useCallback(
-    (event: ChangeEvent<HTMLSelectElement>) => {
-      updateConfig({ [event.target.name]: event.target.value })
-    },
-    [updateConfig]
-  )
-
   switch (useLoading()) {
     case "none":
       return (
@@ -76,70 +70,72 @@ export const Options: FunctionComponent = () => {
   if (!parser) return <></>
 
   return (
-    <form className="flex flex-col items-center gap-10">
+    <div className="flex flex-col items-center gap-10">
       {navBar}
 
-      <div className="flex flex-col flex-wrap justify-center gap-6 md:flex-row">
-        <Tippy
-          content="Does the first cycle begin with a charge or a discharge? If set to the opposite value from what is detected, the first will only be a half-cycle."
-          placement="bottom"
-        >
-          <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
-            Charge first?
-            <input
-              className="ml-2 mb-3 h-6 w-6 rounded-full text-yellow-500"
-              type="checkbox"
-              name="chargeFirst"
-              checked={config.chargeFirst}
-              onChange={(e) => updateConfig({ chargeFirst: e.target.checked })}
-            />
-          </label>
-        </Tippy>
-
-        <ColumnSelectBox
-          name="splitBasis"
-          label="Detect cycles based on"
-          columns={parser.columnItems}
-          value={config.splitBasis}
-          onChange={handleChange}
-          helpText="Which column should be used to find cycles? They will be separated whenever this column switches between positive and negative. Lines where it's zero are discarded."
-        />
-
-        <ColumnSelectBox
-          name="voltageColumn"
-          label="Voltage"
-          helpText="Which column shows the voltage you are interested in? It's used to show min & max values."
-          value={config.vCol}
-          columns={parser.columnItems}
-          onChange={handleChange}
-        />
-
-        <ColumnSelectBox
-          name="spcColumn"
-          label="Specific Capacity"
-          helpText="Which column shows the specific capacity you are interested in? It's used to calculate capacity and retention."
-          value={config.spcCol}
-          columns={parser.columnItems}
-          onChange={handleChange}
-        />
-
-        <Tippy
-          placement="bottom"
-          content="Reset all settings to their default values."
-        >
-          <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
-            Reset to Defaults
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                resetConfig()
-              }}
+      <Formik initialValues={config} onSubmit={updateConfig}>
+        {(provided) => {
+          return (
+            <Form
+              onChange={provided.submitForm}
+              className="flex flex-col flex-wrap justify-center gap-6 md:flex-row"
             >
-              <ArrowPath size={24} />
-            </button>
-          </label>
-        </Tippy>
-      </div>
+              <Tippy
+                content="Does the first cycle begin with a charge or a discharge? If set to the opposite value from what is detected, the first will only be a half-cycle."
+                placement="bottom"
+              >
+                <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
+                  Charge first?
+                  <Field
+                    className="ml-2 mb-3 h-6 w-6 rounded-full text-yellow-500"
+                    type="checkbox"
+                    name="chargeFirst"
+                  />
+                </label>
+              </Tippy>
+
+              <ColumnSelectBox
+                name="splitBasis"
+                label="Detect cycles based on"
+                columns={parser.columnItems}
+                helpText="Which column should be used to find cycles? They will be separated whenever this column switches between positive and negative. Lines where it's zero are discarded."
+              />
+
+              <ColumnSelectBox
+                name="vCol"
+                label="Voltage"
+                helpText="Which column shows the voltage you are interested in? It's used to show min & max values."
+                columns={config.keptCols}
+              />
+
+              <ColumnSelectBox
+                name="spcCol"
+                label="Specific Capacity"
+                helpText="Which column shows the specific capacity you are interested in? It's used to calculate capacity and retention."
+                columns={config.keptCols}
+              />
+
+              <Tippy
+                placement="bottom"
+                content="Reset all settings to their default values."
+              >
+                <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
+                  Reset to Defaults
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      provided.resetForm()
+                      resetConfig()
+                    }}
+                  >
+                    <ArrowPath size={24} />
+                  </button>
+                </label>
+              </Tippy>
+            </Form>
+          )
+        }}
+      </Formik>
 
       <ChunkerPreview />
 
@@ -167,6 +163,6 @@ export const Options: FunctionComponent = () => {
           ))}
         </ul>
       </section>
-    </form>
+    </div>
   )
 }

@@ -54,9 +54,9 @@ export default class Parser {
 
     this.columns = this.parsedChart.data.shift() as string[]
     this.columnItems =
-      this?.columns?.map((label, index) => ({
-        text: label,
-        value: index,
+      this?.columns?.map((name, index) => ({
+        name,
+        index,
       })) || []
 
     this.lines = this.parsedChart.data as RawLine[]

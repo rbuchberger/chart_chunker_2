@@ -71,7 +71,12 @@ export const useStore = create(
     },
 
     addKeptColumn: (columnNumber: number) => {
-      const config = defaultColConfigs[columnNumber] || { index: columnNumber }
+      const config = {
+        index: columnNumber,
+        name: get().parser?.columns[columnNumber],
+        ...defaultColConfigs[columnNumber],
+      }
+
       get().upsertKeptColumn(config)
     },
 
