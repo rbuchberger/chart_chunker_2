@@ -1,11 +1,15 @@
+import { yieldOrContinue } from "main-thread-scheduling"
+
 export {}
 
 self.onmessage = function (event: MessageEvent<File>) {
   const file = event.data
   const reader = new FileReader()
 
-  reader.onload = function (event: ProgressEvent<FileReader>) {
+  reader.onload = async function (event: ProgressEvent<FileReader>) {
     const text = event.target?.result
+
+    await yieldOrContinue("background")
 
     self.postMessage({ result: "success", text })
   }

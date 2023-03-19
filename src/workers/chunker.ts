@@ -1,3 +1,5 @@
+import { yieldOrContinue } from "main-thread-scheduling"
+
 import { chunk, Chunker, ChunkerConfig } from "../chunker/chunk"
 import Parser from "../chunker/parser"
 
@@ -22,7 +24,7 @@ export type ChunkWorkerResponse = {
   error?: unknown
 }
 
-self.onmessage = function (event: MessageEvent<ChunkWorkerRequest>) {
+self.onmessage = async function (event: MessageEvent<ChunkWorkerRequest>) {
   if (event.data.config) data.config = event.data.config
   if (event.data.parser) data.parser = event.data.parser
 
@@ -34,6 +36,8 @@ self.onmessage = function (event: MessageEvent<ChunkWorkerRequest>) {
 
   try {
     data.chunker = chunk({ config: data.config, parser: data.parser })
+
+    await yieldOrContinue("background")
 
     self.postMessage({
       chunker: data.chunker,
