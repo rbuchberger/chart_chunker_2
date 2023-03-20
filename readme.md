@@ -6,9 +6,9 @@ it chunks charts
 
 This is a React + Vite + Typescript + Tailwind rewrite of the [old version](https://github.com/rbuchberger/chart_chunker), which is a Nuxt + Vue2 + Vuetify site (plain JS).
 
-Its purpose is taking result data from a particular couple of battery testers and wrangling it into a much more convenient format, as well as performing some simple analysis. For demo purposes, some sample data can be found in the test_data directory.
+Its purpose is to take result data from battery testers and wrangle it into a much more convenient format, perform some simple analysis, and present it nicely. For a demo, click the "example" button.
 
-These files are big CSV tables, on the order of 30 MB. The new version does much of the processing using background workers, which avoids blocking the main thread and greatly improves overall responsiveness.
+These files are big-ish CSV tables, on the order of 30 MB. The new version does much of the processing using background workers, which avoids blocking the main thread and greatly improves overall responsiveness.
 
 Application state is handled by zustand, and there are a few tests of the chunker written in vitest. It's entirely a static SPA; there are no API endpoints, nor do I anticipate a need for them in the future.
 

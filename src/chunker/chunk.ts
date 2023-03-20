@@ -11,6 +11,7 @@ export type ChunkerConfig = {
   keptCols: ColumnConfig[]
   spcCol?: number
   vCol?: number
+  commaDecimal?: boolean
 }
 
 export type Context = { config: ChunkerConfig; parser: Parser }

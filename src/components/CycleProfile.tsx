@@ -23,7 +23,7 @@ export const CycleProfile: FunctionComponent<{
       chunker: state.chunker,
     }
   })
-  const { keptCols, spcCol, vCol, chargeFirst } = config
+  const { keptCols, spcCol, vCol, chargeFirst } = config || { keptCols: [] }
 
   const [flip, setFlip] = useState(false)
 

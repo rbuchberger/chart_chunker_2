@@ -14,7 +14,7 @@ export const ColumnSettingsItem: FunctionComponent<{
 }> = ({ keptColIndex: keptColIndex }) => {
   const { config, rawNames, removeKeptColumn, upsertKeptColumn } = useStore(
     (state) => ({
-      config: state.config.keptCols?.[keptColIndex],
+      config: state.config?.keptCols?.[keptColIndex],
       rawNames: state?.parser?.columns,
       removeKeptColumn: state.removeKeptColumn,
       upsertKeptColumn: state.upsertKeptColumn,

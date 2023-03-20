@@ -7,7 +7,11 @@ import ReadWorker from "../workers/filereader?worker"
 import ParseWorker from "../workers/parser?worker"
 import { useStore } from "./useStore"
 
-export type FakeFile = { name: string; fake: true }
+export type FakeFile = {
+  name: string
+  fake: true
+  dataType: "atlas" | "biologic" | "other"
+}
 
 // There's a pipeline from file upload to chunker output, many steps of which
 // are asynchronous. There are also multiple inputs which require different
@@ -19,6 +23,24 @@ const readWorker = new ReadWorker()
 const parseWorker = new ParseWorker()
 const chunkWorker = new ChunkWorker()
 
+export type DataType = Awaited<ReturnType<typeof identifyFile>>
+
+export const identifyFile = async (file?: File | FakeFile | null) => {
+  if (!file) return null
+  if ((file as FakeFile).fake) return (file as FakeFile).dataType
+
+  const text = await (file as File).slice(0, 512).text()
+  const lines = text.split(/\r?\n/)
+
+  if (lines[0]?.match(/AMPG&T/) && lines[1]?.match(/ATLAS/)) {
+    return "atlas"
+  } else if (lines[0]?.match(/^mode\tox\/red\terror/)) {
+    return "biologic"
+  } else {
+    return "other"
+  }
+}
+
 export const useChunker = () => {
   const {
     file,
@@ -26,7 +48,10 @@ export const useChunker = () => {
     setText,
     parser,
     setParser,
+    dataType,
+    setDataType,
     config,
+    setConfig,
     setChunker,
     flash,
     reset,
@@ -34,9 +59,12 @@ export const useChunker = () => {
     file: state.file,
     text: state.text,
     setText: state.setText,
+    dataType: state.dataType,
+    setDataType: state.setDataType,
     parser: state.parser,
     setParser: state.setParser,
     config: state.config,
+    setConfig: state.setConfig,
     setChunker: state.setChunker,
     flash: state.flash,
     reset: state.reset,
@@ -89,23 +117,29 @@ export const useChunker = () => {
   // Parse file into text when uploaded
   useEffect(() => {
     async function postFile() {
+      const dataType = await identifyFile(file as File)
+      setDataType(dataType)
+
+      if (!file || (file as FakeFile).fake) return
       await yieldOrContinue("background")
 
       readWorker.postMessage(file)
     }
 
-    if (file && !(file as FakeFile).fake) postFile()
-  }, [file])
+    postFile()
+  }, [file, setConfig, setDataType])
 
   // Hand text to parser when text finishes
   useEffect(() => {
     async function postText() {
+      if (!dataType) return
+
       await yieldOrContinue("background")
-      parseWorker.postMessage(text)
+      parseWorker.postMessage({ text, dataType })
     }
 
     if (text) postText()
-  }, [text])
+  }, [dataType, text])
 
   // Pass config to chunker
   useEffect(() => {

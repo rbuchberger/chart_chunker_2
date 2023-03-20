@@ -6,14 +6,15 @@ import { Chunker, ChunkerConfig } from "../chunker/chunk"
 import Parser from "../chunker/parser"
 import { FlashMessage } from "../components/FlashMessage"
 import { defaultColConfigs } from "../constants/defaultColConfigs"
-import { initialConfig, initialState } from "../constants/initialState"
-import { FakeFile } from "./useChunker"
+import { defaultConfigs, initialState } from "../constants/initialState"
+import { DataType, FakeFile } from "./useChunker"
 
 export type State = Readonly<{
   file: File | FakeFile | null
   text: string | null
   parser: Parser | null
-  config: ChunkerConfig
+  dataType: DataType | null
+  config: ChunkerConfig | null
   chunker: Chunker | null
   flashMessages: FlashMessage[]
 }>
@@ -22,6 +23,7 @@ export type Actions = Readonly<{
   setFile: (file: State["file"]) => void
   setText: (text: State["text"]) => void
   setParser: (parser: State["parser"]) => void
+  setDataType: (dataType: DataType | null) => void
 
   setChunker: (chunker: State["chunker"]) => void
 
@@ -46,10 +48,17 @@ export const useStore = create(
     setText: (text) => set({ text }),
     setParser: (parser) => set({ parser }),
     setConfig: (config) => set({ config }),
+    setDataType: (dataType) => {
+      const config = dataType ? defaultConfigs[dataType] : null
+      set({ dataType, config })
+    },
     setChunker: (chunker) => set({ chunker }),
 
     updateConfig: (config: Partial<ChunkerConfig>) => {
       set((state) => {
+        if (!state.config)
+          throw new Error("Config must already exist to update it")
+
         state.config = { ...state.config, ...config }
       })
     },
@@ -71,10 +80,14 @@ export const useStore = create(
     },
 
     addKeptColumn: (columnNumber: number) => {
+      if (!get().dataType)
+        throw new Error("Data type must be set before adding a column")
       const config = {
         index: columnNumber,
         name: get().parser?.columns[columnNumber],
-        ...defaultColConfigs[columnNumber],
+        ...defaultColConfigs[(get().dataType as DataType) || "other"][
+          columnNumber
+        ],
       }
 
       get().upsertKeptColumn(config)
@@ -84,12 +97,18 @@ export const useStore = create(
     // raw columns
     removeKeptColumn: (keptColumnIndex: number) => {
       set((state) => {
+        if (!state.config)
+          throw new Error("Config must exist to remove a kept column")
+
         state.config.keptCols.splice(keptColumnIndex, 1)
       })
     },
 
     upsertKeptColumn: (config: ColumnConfig) => {
       set((state) => {
+        if (!state.config)
+          throw new Error("Config must exist to upsert a kept column")
+
         const location = state.config.keptCols.findIndex(
           (c) => c.index === config.index
         )
@@ -109,13 +128,18 @@ export const useStore = create(
       set({
         file: null,
         text: null,
+        config: null,
+        dataType: null,
         parser: null,
         chunker: null,
       })
     },
 
     resetConfig: () => {
-      set({ config: { ...initialConfig } })
+      const config = get().dataType
+        ? defaultConfigs[(get().dataType as DataType) || "other"]
+        : null
+      set({ config })
     },
   }))
 )
