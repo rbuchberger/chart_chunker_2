@@ -1,8 +1,8 @@
 import { yieldOrContinue } from "main-thread-scheduling"
 
-import Parser from "../chunker/parser"
+import Parser, { ParserConfig } from "../chunker/parser"
 
-self.onmessage = async function (event: MessageEvent<string>) {
+self.onmessage = async function (event: MessageEvent<ParserConfig>) {
   try {
     const parser = new Parser(event.data)
 

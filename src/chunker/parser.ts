@@ -1,5 +1,8 @@
 import Papa from "papaparse"
 
+import { DataType } from "../hooks/useChunker"
+
+// Atlas headers:
 // 0   index
 // 1   time
 // 2   Sum Time[s],
@@ -26,22 +29,63 @@ import Papa from "papaparse"
 // 23  Uext[V],
 // 24  Status,
 
+// Biologic headers
+// 0 mode
+// 1 ox/red
+// 2 error
+// 3 control changes
+// 4 Ns changes
+// 5 counter inc.
+// 6 Ns
+// 7 time/s
+// 8 control/mA
+// 9 Ecell/V
+// 10 I/mA
+// 11 dQ/C
+// 12 (Q-Qo)/C
+// 13 I Range
+// 14 Energy charge/W.h
+// 15 Energy discharge/W.h
+// 16 Capacitance charge/µF
+// 17 Capacitance discharge/µF
+// 18 Q discharge/mA.h
+// 19 Q charge/mA.h
+// 20 Capacity/mA.h
+// 21 Efficiency/%
+// 22 cycle number
+// 23 P/W
+
 export type RawLine = string[]
 
+export type ParserConfig = {
+  text: string
+  dataType: DataType
+  // options: Papa.ParseConfig
+}
+
 export default class Parser {
-  rawText
+  text
   header
   parsedChart
   columns: string[]
   columnItems
   lines: RawLine[]
+  // parserConfig: Papa.ParseConfig
 
-  constructor(rawText: string) {
-    this.rawText = rawText
+  constructor({ text, dataType }: ParserConfig) {
+    this.text = text
 
-    const splitText = this.rawText.split("RESULTS TABLE:")
-    this.header = splitText.shift()
-    this.parsedChart = this.buildParsedChart(splitText.shift())
+    let rawText: string
+
+    if (dataType === "atlas") {
+      const splitText = this.text.split("RESULTS TABLE:")
+      this.header = splitText.shift()
+      rawText = splitText.shift() || ""
+    } else {
+      rawText = this.text
+    }
+
+    this.parsedChart = this.buildParsedChart(rawText.trim())
 
     if (
       this.parsedChart.errors.length > 0 ||
@@ -67,7 +111,9 @@ export default class Parser {
       return { data: [], errors: [], meta: {} }
     }
 
-    const parsed = Papa.parse(rawChart.trim().replace(/\t/g, ""))
+    const parsed = Papa.parse(rawChart, {
+      delimitersToGuess: [Papa.RECORD_SEP, Papa.UNIT_SEP, ";", "\t", ",", "|"],
+    })
 
     return parsed
   }

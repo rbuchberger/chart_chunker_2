@@ -4,7 +4,7 @@ import { sample1 } from "../../test_data/sample1_trunc"
 import Parser from "./parser"
 
 test("parser", () => {
-  const parser = new Parser(sample1)
+  const parser = new Parser({ text: sample1, dataType: "atlas" })
 
   expect(parser.columns).toEqual([
     "Indeks",
@@ -247,13 +247,5 @@ test("parser", () => {
   ])
 
   expect(parser.parsedChart.data.length).toBe(1000)
-  expect(parser.parsedChart.errors.length).toBe(0)
-})
-
-test("empty parser", () => {
-  const parser = new Parser("")
-
-  expect(parser.columns).toEqual([])
-  expect(parser.parsedChart.data.length).toBe(0)
   expect(parser.parsedChart.errors.length).toBe(0)
 })

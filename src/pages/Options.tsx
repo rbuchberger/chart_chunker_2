@@ -60,14 +60,21 @@ export const Options: FunctionComponent = () => {
       )
   }
 
-  const unkeptCols = parser?.columns
+  // Switch case above will ensure this doesn't happen, but TS doesn't know that.
+  if (!parser || !config) return <></>
+
+  const unkeptCols = parser.columns
     .map((col, i) => {
       return { rawName: col, index: i }
     })
-    .filter((_c, i) => !config.keptCols.find((kc) => kc.index === i))
+    .filter((_c, i) => !config?.keptCols.find((kc) => kc.index === i))
 
-  // Switch case above will ensure this doesn't happen, but TS doesn't know that.
-  if (!parser) return <></>
+  const keptColOptions = config.keptCols.map((col) => {
+    return {
+      name: parser.columns[col.index],
+      ...col,
+    }
+  })
 
   return (
     <div className="flex flex-col items-center gap-10">
@@ -105,14 +112,14 @@ export const Options: FunctionComponent = () => {
                 name="vCol"
                 label="Voltage"
                 helpText="Which column shows the voltage you are interested in? It's used to show min & max values."
-                columns={config.keptCols}
+                columns={keptColOptions}
               />
 
               <ColumnSelectBox
                 name="spcCol"
                 label="Specific Capacity"
                 helpText="Which column shows the specific capacity you are interested in? It's used to calculate capacity and retention."
-                columns={config.keptCols}
+                columns={keptColOptions}
               />
 
               <Tippy

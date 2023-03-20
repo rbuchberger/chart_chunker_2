@@ -17,6 +17,7 @@ export const ExampleButton: FunctionComponent = () => {
     file: state.file,
     setText: state.setText,
     setFile: state.setFile,
+    setDataType: state.setDataType,
     flash: state.flash,
   }))
 
@@ -35,7 +36,9 @@ export const ExampleButton: FunctionComponent = () => {
     fetch("/sample1.txt")
       .then((res) => res.text())
       .then(setText)
-      .then(() => setFile({ name: "example1.txt", fake: true }))
+      .then(() =>
+        setFile({ name: "Atlas Example.txt", fake: true, dataType: "atlas" })
+      )
       .catch((err) => {
         flash(err.message || "Could not load example data, sorry")
         setLoading("none")

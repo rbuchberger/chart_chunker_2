@@ -38,8 +38,10 @@ export function buildHalf(
       if (val === undefined) return
 
       // parse, multiply, round, abs, in that order.
-      function processNumber(number: number) {
-        let processed = number
+      function processVal(val: string) {
+        let processed = parseFloat(
+          config.commaDecimal ? val.replace(",", ".") : val
+        )
 
         if (abs) processed = Math.abs(processed)
         if (coefficient) processed *= coefficient
@@ -50,14 +52,11 @@ export function buildHalf(
 
       switch (kind) {
         case "float": {
-          const float = parseFloat(val)
-
-          return processNumber(float)
+          return processVal(val)
         }
 
         case "integer": {
-          const int = parseInt(val)
-          return processNumber(int)
+          return processVal(val)
         }
 
         case "string":
