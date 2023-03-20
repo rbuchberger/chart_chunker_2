@@ -28,12 +28,6 @@ export const Root: FunctionComponent = () => {
       </h2>
 
       <div className="mx-auto flex max-w-prose flex-col gap-6">
-        <p className="max-w-prose">
-          This is the new and improved chart chunker; it is almost a complete
-          rewrite. It should be faster, easier to use, and generally
-          better-behaved. It will definitely be easier to maintain!
-        </p>
-
         <p>
           This project is open source and can be found on{" "}
           <a
@@ -42,8 +36,8 @@ export const Root: FunctionComponent = () => {
           >
             Github
           </a>
-          . You are encouraged to submit issues, discussions, and pull requests
-          as you like. If you prefer, you can contact me directly:{" "}
+          . You are encouraged to submit issues, discussions, and pull requests.
+          If you prefer, you can contact me directly:{" "}
           <a
             className="text-yellow-400 hover:underline"
             href="mailto:robert@buchberger.cc"
@@ -60,7 +54,8 @@ export const Root: FunctionComponent = () => {
           >
             here
           </a>
-          .
+          . Bookmark it if you want because I&apos;m not leaving this link here
+          forever!
         </p>
 
         <div className="mt-6">
@@ -78,24 +73,9 @@ export const Root: FunctionComponent = () => {
           </p>
 
           <ul className="list-disc pl-6">
-            <li>Column Modifications! Check out the options page.</li>
             <li>
-              <a
-                className="text-yellow-400 hover:underline"
-                href="https://github.com/rbuchberger/chart_chunker_2/issues/7"
-              >
-                UI Tweaks & improvements
-              </a>{" "}
-              - loading animation, easy example data, and more.
-            </li>
-            <li>
-              Add support for half-cycles, and fix the bug where some cycles
-              weren&apos;t detected.
-            </li>
-            <li>Add option to set whether charge or discharge is first</li>
-            <li>
-              Rewrite chunker logic - it&apos;s smaller, faster, and easier to
-              modify. More changes to come!
+              <span className="font-bold">20 March</span> - Did you notice the
+              options page was broken? It&apos;s fixed now, and faster.
             </li>
           </ul>
         </div>
