@@ -14,6 +14,7 @@ import { NavBar } from "../components/NavBar"
 import { useLoading } from "../hooks/useLoading"
 import { useStore } from "../hooks/useStore"
 import { ColumnSelectBox } from "../primitives/ColumnSelectBox"
+import { SyncFormStore } from "../primitives/SyncFormStore"
 
 export const Options: FunctionComponent = () => {
   const { config, updateConfig, resetConfig, parser } = useStore((state) => ({
@@ -83,63 +84,67 @@ export const Options: FunctionComponent = () => {
       <Formik initialValues={config} onSubmit={updateConfig}>
         {(provided) => {
           return (
-            <Form
-              onChange={provided.submitForm}
-              className="flex flex-col flex-wrap justify-center gap-6 md:flex-row"
-            >
-              <Tippy
-                content="Does the first cycle begin with a charge or a discharge? If set to the opposite value from what is detected, the first will only be a half-cycle."
-                placement="bottom"
+            <>
+              <SyncFormStore storeState={config} />
+
+              <Form
+                onChange={provided.submitForm}
+                className="flex flex-col flex-wrap justify-center gap-6 md:flex-row"
               >
-                <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
-                  Charge first?
-                  <Field
-                    className="ml-2 mb-3 h-6 w-6 rounded-full text-yellow-500"
-                    type="checkbox"
-                    name="chargeFirst"
-                  />
-                </label>
-              </Tippy>
+                <Tippy
+                  content="Does the first cycle begin with a charge or a discharge? If set to the opposite value from what is detected, the first will only be a half-cycle."
+                  placement="bottom"
+                >
+                  <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
+                    Charge first?
+                    <Field
+                      className="ml-2 mb-3 h-6 w-6 rounded-full text-yellow-500"
+                      type="checkbox"
+                      name="chargeFirst"
+                    />
+                  </label>
+                </Tippy>
 
-              <ColumnSelectBox
-                name="splitBasis"
-                label="Detect cycles based on"
-                columns={parser.columnItems}
-                helpText="Which column should be used to find cycles? They will be separated whenever this column switches between positive and negative. Lines where it's zero are discarded."
-              />
+                <ColumnSelectBox
+                  name="splitBasis"
+                  label="Detect cycles based on"
+                  columns={parser.columnItems}
+                  helpText="Which column should be used to find cycles? They will be separated whenever this column switches between positive and negative. Lines where it's zero are discarded."
+                />
 
-              <ColumnSelectBox
-                name="vCol"
-                label="Voltage"
-                helpText="Which column shows the voltage you are interested in? It's used to show min & max values."
-                columns={keptColOptions}
-              />
+                <ColumnSelectBox
+                  name="vCol"
+                  label="Voltage"
+                  helpText="Which column shows the voltage you are interested in? It's used to show min & max values."
+                  columns={keptColOptions}
+                />
 
-              <ColumnSelectBox
-                name="spcCol"
-                label="Specific Capacity"
-                helpText="Which column shows the specific capacity you are interested in? It's used to calculate capacity and retention."
-                columns={keptColOptions}
-              />
+                <ColumnSelectBox
+                  name="spcCol"
+                  label="Specific Capacity"
+                  helpText="Which column shows the specific capacity you are interested in? It's used to calculate capacity and retention."
+                  columns={keptColOptions}
+                />
 
-              <Tippy
-                placement="bottom"
-                content="Reset all settings to their default values."
-              >
-                <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
-                  Reset to Defaults
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault()
-                      resetConfig()
-                      provided.resetForm()
-                    }}
-                  >
-                    <ArrowPath size={24} />
-                  </button>
-                </label>
-              </Tippy>
-            </Form>
+                <Tippy
+                  placement="bottom"
+                  content="Reset all settings to their default values."
+                >
+                  <label className="flex cursor-pointer select-none flex-col items-center justify-between whitespace-nowrap text-sm font-medium text-gray-300">
+                    Reset to Defaults
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        resetConfig()
+                        provided.resetForm()
+                      }}
+                    >
+                      <ArrowPath size={24} />
+                    </button>
+                  </label>
+                </Tippy>
+              </Form>
+            </>
           )
         }}
       </Formik>
